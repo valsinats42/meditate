@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navigation_item_medidate"
+            android:checked="true"
+            android:title="Meditate" />
+        <item
+            android:id="@+id/navigation_item_log"
+            android:title="Log" />
+        <item
+            android:id="@+id/navigation_item_settings"
+            android:title="Settings" />
+    </group>
+</menu>
