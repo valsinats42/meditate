@@ -8,4 +8,7 @@
     <color name="secondary_text">#727272</color>
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
+
+    <color name="mdtp_accent_color">@color/accent</color>
+    <color name="mdtp_accent_color_dark">@color/primary_dark</color>
 </resources>

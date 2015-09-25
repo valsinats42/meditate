@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.app.Fragment
+import android.support.v7.widget.CardView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import me.stanislav_nikolov.meditate.R
 
 /**
  * A simple [Fragment] subclass.
@@ -25,20 +27,20 @@ public class SitFragment : android.support.v4.app.Fragment() {
     var sessionLengthMinutes = DEFAULT_SESSION_LENGTH
 
     // UI
-    var buttonMinusTime: android.widget.Button? = null
-    var buttonPlusTime: android.widget.Button? = null
-    var fabStart: android.support.design.widget.FloatingActionButton? = null
-    var textViewTime: android.widget.TextView? = null
-    var timerView: android.view.View? = null
+    var buttonMinusTime: Button? = null
+    var buttonPlusTime: Button? = null
+    var fabStart: FloatingActionButton? = null
+    var textViewTime: TextView? = null
+    var timerView: CardView? = null
 
     override fun onCreateView(inflater: android.view.LayoutInflater, container: android.view.ViewGroup?, savedInstanceState: android.os.Bundle?): android.view.View? {
         val view = inflater.inflate(me.stanislav_nikolov.meditate.R.layout.fragment_sit, container, false)
 
-        buttonMinusTime = view.findViewById(me.stanislav_nikolov.meditate.R.id.buttonMinusTime) as android.widget.Button
-        buttonPlusTime = view.findViewById(me.stanislav_nikolov.meditate.R.id.buttonPlusTime) as android.widget.Button
-        fabStart = view.findViewById(me.stanislav_nikolov.meditate.R.id.fabStartStop) as android.support.design.widget.FloatingActionButton
-        textViewTime = view.findViewById(me.stanislav_nikolov.meditate.R.id.textViewTime) as android.widget.TextView
-        timerView = view.findViewById(me.stanislav_nikolov.meditate.R.id.timerView)
+        buttonMinusTime = view.findViewById(R.id.buttonMinusTime) as Button
+        buttonPlusTime = view.findViewById(R.id.buttonPlusTime) as Button
+        fabStart = view.findViewById(R.id.fabStartStop) as FloatingActionButton
+        textViewTime = view.findViewById(R.id.textViewTime) as TextView
+        timerView = view.findViewById(R.id.timerView) as CardView
 
         buttonMinusTime!!.setOnClickListener {
             if (sessionLengthMinutes > 5) sessionLengthMinutes -= 5
@@ -52,14 +54,13 @@ public class SitFragment : android.support.v4.app.Fragment() {
 
         fabStart!!.setOnClickListener {
             val preparationLength: Long = 5
-            val activity = MeditationSessionActivity.newInstance(getActivity(), sessionLengthMinutes * 60, preparationLength)
-            val options = android.support.v4.app.ActivityOptionsCompat.makeSceneTransitionAnimation(
+            val activity = MeditationSessionActivity.newInstance(activity, sessionLengthMinutes * 60, preparationLength)
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     getActivity(),
-                    android.support.v4.util.Pair<android.view.View, String>(fabStart, getString(me.stanislav_nikolov.meditate.R.string.fabTransition)),
-                    android.support.v4.util.Pair<android.view.View, String>(textViewTime, getString(me.stanislav_nikolov.meditate.R.string.timeMinutesTransition)),
-                    android.support.v4.util.Pair<android.view.View, String>(timerView, getString(me.stanislav_nikolov.meditate.R.string.timerTransition))
+                    android.support.v4.util.Pair<View, String>(timerView, getString(R.string.timerTransition)),
+                    android.support.v4.util.Pair<View, String>(textViewTime, getString(R.string.timeMinutesTransition))
             )
-            getActivity().startActivity(activity, options.toBundle())
+            getActivity().startActivityForResult(activity, 0, options.toBundle())
         }
 
         updateUi()
@@ -78,12 +79,10 @@ public class SitFragment : android.support.v4.app.Fragment() {
     }
 
     private fun updateUi() {
-        textViewTime?.setText("$sessionLengthMinutes min")
+        textViewTime?.text = "$sessionLengthMinutes min"
     }
 
     companion object {
-        public fun newInstance(): SitFragment {
-            return SitFragment()
-        }
+        public fun newInstance(): SitFragment = SitFragment()
     }
 }
