@@ -2,6 +2,8 @@ package me.stanislav_nikolov.meditate;
 
 import android.app.Application;
 
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 import me.stanislav_nikolov.meditate.dagger.DaggerMeditateComponent;
 import me.stanislav_nikolov.meditate.dagger.MeditateAppModule;
 import me.stanislav_nikolov.meditate.dagger.MeditateComponent;
@@ -15,6 +17,7 @@ public class MeditateApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
 
         graph = DaggerMeditateComponent.builder()
                 .meditateAppModule(new MeditateAppModule(this))

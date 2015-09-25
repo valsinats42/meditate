@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.github.ben-manes.versions'
 
@@ -54,6 +55,9 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.0.1'
     compile 'com.google.dagger:dagger:2.0.1'
     provided 'javax.annotation:jsr250-api:1.0'
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
+        transitive = true;
+    }
 }
 
 buildscript {
@@ -61,13 +65,16 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
+        maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.11.3'
+        classpath 'io.fabric.tools:gradle:1.+'
     }
 }
 
 repositories {
     mavenCentral()
+    maven { url 'https://maven.fabric.io/public' }
 }
