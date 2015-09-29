@@ -6,43 +6,39 @@ import android.os.CountDownTimer
 import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
-import android.support.v4.app.SharedElementCallback
 import android.support.v7.app.AppCompatActivity
 import android.text.format.DateUtils
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import hirondelle.date4j.DateTime
 import io.realm.Realm
 import me.stanislav_nikolov.meditate.MeditateApp
-import me.stanislav_nikolov.meditate.db.DbMeditationSession
 import me.stanislav_nikolov.meditate.R
+import me.stanislav_nikolov.meditate.db.DbMeditationSession
 import me.stanislav_nikolov.meditate.secondsToHMS
 import me.stanislav_nikolov.meditate.toDate
-import java.util
+import timber.log.Timber
 import java.util.*
-import java.util.concurrent.ScheduledThreadPoolExecutor
 import javax.inject.Inject
-import kotlin.concurrent.timer
 import kotlin.properties.Delegates
 
 public class MeditationSessionActivity : AppCompatActivity() {
-    var preparationTime: Long by Delegates.notNull()
-    var sessionLength: Long by Delegates.notNull()
+    var preparationTime = 0L
+    var sessionLength = 0L
 
     var snackbar: android.support.design.widget.Snackbar? = null
     var preparationTimer: PreparationTimer? = null
     var meditationTimer: MeditationTimer? = null
-    val soundPool = SoundPool.Builder().build()
     var startTime: DateTime? = null
     var originalSessionLength: Long by Delegates.notNull()
 
     // UI
-    var minutes: TextView by Delegates.notNull()
-    var seconds: TextView by Delegates.notNull()
-    var layout: CoordinatorLayout by Delegates.notNull()
-    var fabStop: FloatingActionButton by Delegates.notNull()
+    lateinit var minutes: TextView
+    lateinit var seconds: TextView
+    lateinit var layout: CoordinatorLayout
+    lateinit var fabStop: FloatingActionButton
 
+    @Inject lateinit val soundPool: SoundPool
     @Inject lateinit val realm: Realm
 
     companion object {
@@ -59,9 +55,9 @@ public class MeditationSessionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(me.stanislav_nikolov.meditate.R.layout.activity_meditation_session)
+        setContentView(R.layout.activity_meditation_session)
 
-        MeditateApp.getGraph().inject(this)
+        (application as MeditateApp).graph.inject(this)
 
         loadExtras()
         bindViews()
@@ -107,7 +103,8 @@ public class MeditationSessionActivity : AppCompatActivity() {
         ms.initialDurationSeconds = originalSessionLength.toInt()
         ms.startTime = startTime!!.toDate()
         ms.endTime = DateTime.now(TimeZone.getDefault()).toDate()
-        ms.comment = ":-)"
+
+        Timber.d("Saving new session: %s -- %s", ms.startTime, ms.endTime)
 
         realm.commitTransaction()
     }
@@ -136,8 +133,6 @@ public class MeditationSessionActivity : AppCompatActivity() {
         preparationTime = extras.getLong(ARG_WARM_UP_PERIOD)
         sessionLength = extras.getLong(ARG_TIMER_LENGTH)
         originalSessionLength = sessionLength
-
-        sessionLength = 10
     }
 
     override fun onDestroy() {

@@ -12,6 +12,7 @@
 
     <string name="plus_5min">+5 min</string>
     <string name="minus_5min">-5 min</string>
+    <string name="delete">Delete</string>
     <plurals name="minutes">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>

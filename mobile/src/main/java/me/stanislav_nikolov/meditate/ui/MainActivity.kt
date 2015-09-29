@@ -2,42 +2,46 @@ package me.stanislav_nikolov.meditate.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import android.support.v7.app.AppCompatActivity
+import android.support.v4.view.ViewPager
+import android.support.v7.widget.Toolbar
+import hirondelle.date4j.DateTime
+import me.stanislav_nikolov.meditate.R
 import me.stanislav_nikolov.meditate.db.DbMeditationSession
 import me.stanislav_nikolov.meditate.toDate
 
 public class MainActivity : android.support.v7.app.AppCompatActivity() {
 
-    var toolbar: android.support.v7.widget.Toolbar? = null
-    var viewPager: android.support.v4.view.ViewPager? = null
-    var tabLayout: android.support.design.widget.TabLayout? = null
+    lateinit var toolbar: Toolbar
+    lateinit var viewPager: ViewPager
+    lateinit var tabLayout: TabLayout
 
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
-        super<AppCompatActivity>.onCreate(savedInstanceState)
+        super.onCreate(savedInstanceState)
 
-        setContentView(me.stanislav_nikolov.meditate.R.layout.activity_main)
+        setContentView(R.layout.activity_main)
 
-        toolbar = findViewById(me.stanislav_nikolov.meditate.R.id.toolbar) as android.support.v7.widget.Toolbar
-        viewPager = findViewById(me.stanislav_nikolov.meditate.R.id.view_pager) as android.support.v4.view.ViewPager
-        tabLayout = findViewById(me.stanislav_nikolov.meditate.R.id.tab_layout) as android.support.design.widget.TabLayout
+        toolbar = findViewById(R.id.toolbar) as Toolbar
+        viewPager = findViewById(R.id.view_pager) as ViewPager
+        tabLayout = findViewById(R.id.tab_layout) as TabLayout
 
         setSupportActionBar(toolbar)
-        viewPager!!.adapter = ViewPagerAdapter(getSupportFragmentManager())
-        tabLayout!!.setupWithViewPager(viewPager);
+        viewPager.adapter = ViewPagerAdapter(supportFragmentManager)
+        tabLayout.setupWithViewPager(viewPager);
 
 //        loadDb()
     }
 
     private fun loadDb() {
         var dates = arrayOf(
-//                hirondelle.date4j.DateTime("2010-01-19 23:59:59"),
-//                hirondelle.date4j.DateTime("2010-01-20 23:59:59"),
-//                hirondelle.date4j.DateTime("2010-01-21 23:59:59"),
-//                hirondelle.date4j.DateTime("2010-01-23 23:59:59"),
-                hirondelle.date4j.DateTime.now(java.util.TimeZone.getDefault())
+                DateTime("2010-01-19 23:59:59"),
+                DateTime("2010-01-20 23:59:59"),
+                DateTime("2010-01-21 23:59:59"),
+                DateTime("2010-01-23 23:59:59"),
+                DateTime.now(java.util.TimeZone.getDefault())
         )
 
         val realm = io.realm.Realm.getInstance(application)
@@ -77,7 +81,7 @@ public class MainActivity : android.support.v7.app.AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode == Activity.RESULT_OK) {
-            viewPager?.postDelayed({ viewPager?.currentItem = 1 }, 1000)
+            viewPager.postDelayed({ viewPager.currentItem = 1 }, 1000)
         }
     }
 }

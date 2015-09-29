@@ -11,11 +11,10 @@ import me.stanislav_nikolov.meditate.adapters.StatsAdapter
 import me.stanislav_nikolov.meditate.MeditateApp
 import me.stanislav_nikolov.meditate.db.DbMeditationSession
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
 public class StatsFragment : Fragment() {
 
-    var recyclerView: RecyclerView by Delegates.notNull()
+    lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(inflater: android.view.LayoutInflater, container: android.view.ViewGroup?, savedInstanceState: android.os.Bundle?): android.view.View? {
         return inflater.inflate(me.stanislav_nikolov.meditate.R.layout.fragment_stats, container, false)
@@ -26,7 +25,7 @@ public class StatsFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        MeditateApp.getGraph().inject(this)
+        (activity.application as MeditateApp).graph.inject(this)
 
         val data = realm.allObjectsSorted(DbMeditationSession::class.java, "endTime", false)
         val adapter = StatsAdapter(context, realm, data)

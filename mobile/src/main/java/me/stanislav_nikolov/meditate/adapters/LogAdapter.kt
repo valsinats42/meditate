@@ -1,17 +1,23 @@
 package me.stanislav_nikolov.meditate.adapters
 
-import android.app.Application
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.view.ActionMode
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view
+import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
+import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback
+import com.bignerdranch.android.multiselector.MultiSelector
+import com.bignerdranch.android.multiselector.SwappingHolder
 import io.realm.Realm
 import io.realm.RealmResults
-import me.stanislav_nikolov.meditate.*
+import me.stanislav_nikolov.meditate.R
 import me.stanislav_nikolov.meditate.db.*
-import java.util.Locale
+import me.stanislav_nikolov.meditate.getRuns
+import me.stanislav_nikolov.meditate.toHMS
+import timber.log.Timber
+import java.util.*
 
 /**
  * Created by stanley on 05.09.15.
@@ -21,9 +27,14 @@ public class LogAdapter(val realm: Realm, val data: RealmResults<DbMeditationSes
 
     enum class ListPosition { ALONE, FIRST, MIDDLE, LAST }
 
-    private val runs: List<ListPosition>
+    private var runs: List<ListPosition> = emptyList()
 
-    init {
+    private val changeListener = {
+        updateRuns()
+        notifyDataSetChanged()
+    }
+
+    private fun updateRuns() {
         runs = getRuns(data map { it.getAdjustedEndTime() })
                 .flatMap {
                     when (it.numEntries) {
@@ -32,9 +43,60 @@ public class LogAdapter(val realm: Realm, val data: RealmResults<DbMeditationSes
                         else -> listOf(ListPosition.FIRST, *Array(it.numEntries - 2, { ListPosition.MIDDLE }), ListPosition.LAST)
                     }
                 }
+
+        Timber.d("Updated runs: data size: %d, runs size: %d", data.size(), runs.size())
     }
 
-    public class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+    init {
+        realm.addChangeListener(changeListener)
+
+        updateRuns()
+    }
+
+    val multiSelector = MultiSelector()
+
+    private var actionMode: ActionMode? = null
+
+    private val actionModeCallback = object : ModalMultiSelectorCallback(multiSelector) {
+
+        override fun onCreateActionMode(actionMode: ActionMode?, menu: Menu?): Boolean {
+            super.onCreateActionMode(actionMode, menu)
+            actionMode?.menuInflater?.inflate(R.menu.session_log_menu, menu)
+            return true
+        }
+
+        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+            realm.beginTransaction()
+
+            val selectedSessionuuids = multiSelector.selectedPositions.map { data[it].uuid }
+            // TODO fix this when there's a sane way to remove multiple results
+            for (s in selectedSessionuuids) {
+                for (i in 0 .. data.lastIndex) {
+                    if (data[i].uuid == s) {
+                        data.remove(i)
+                        break
+                    }
+                }
+            }
+
+            realm.commitTransaction()
+
+            notifyDataSetChanged()
+
+            multiSelector.clearSelections()
+            mode?.finish()
+            actionMode = null
+
+            return true
+        }
+    }
+
+    fun updateTitle() {
+        val n = multiSelector.selectedPositions.size()
+        actionMode?.title = "$n session${if (n != 1) "s" else ""} selected"
+    }
+
+    inner public class ViewHolder(v: View) : SwappingHolder(v, multiSelector) {
         public var title: TextView
         public var subtitle: TextView
         public var run: ImageView
@@ -43,6 +105,27 @@ public class LogAdapter(val realm: Realm, val data: RealmResults<DbMeditationSes
             title = v.findViewById(R.id.textViewDate) as TextView
             subtitle = v.findViewById(R.id.textViewDuration) as TextView
             run = v.findViewById(R.id.runIndicator) as ImageView
+
+            v.setOnClickListener {
+                if (multiSelector.tapSelection(this)) {
+                    if (multiSelector.selectedPositions.size() == 0) {
+                        actionMode?.finish()
+                        actionMode = null
+                    } else {
+                        updateTitle()
+                    }
+                }
+            }
+
+            v.isLongClickable = true
+            v.setOnLongClickListener {
+                actionMode = (v.context as AppCompatActivity).startSupportActionMode(actionModeCallback)
+                multiSelector.setSelected(this, true)
+
+                updateTitle()
+
+                true
+            }
         }
     }
 

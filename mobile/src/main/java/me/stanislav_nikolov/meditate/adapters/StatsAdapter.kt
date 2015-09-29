@@ -18,6 +18,8 @@ import me.stanislav_nikolov.meditate.db.endsTodayAdjusted
 import me.stanislav_nikolov.meditate.db.getAdjustedEndTime
 import me.stanislav_nikolov.meditate.db.getDuration
 import me.stanislav_nikolov.meditate.getRuns
+import timber.log.Timber
+import java.util.*
 
 /**
  * Created by stanley on 05.09.15.
@@ -28,18 +30,24 @@ public class StatsAdapter(val context: Context, val realm: Realm, val data: Real
 
     data class MeditationStat(val name: String, val value: String)
 
-    var stats: List<MeditationStat> = emptyList()
+    val stats = ArrayList<MeditationStat>()
+
+    private val changeListener = {
+        Timber.d("Change detected")
+
+        calculateStats()
+        notifyDataSetChanged()
+    }
 
     init {
         calculateStats()
 
-        realm.addChangeListener {
-            calculateStats()
-            notifyDataSetChanged()
-        }
+        realm.addChangeListener(changeListener)
     }
 
     private fun calculateStats() {
+        Timber.d("Recalculating stats...")
+
         val runs = getRuns(data map { it.getAdjustedEndTime() })
 
         val currentRun = if (!data.isEmpty() && data[0].endsTodayAdjusted()) { runs[0].run } else { 0 }
@@ -53,13 +61,14 @@ public class StatsAdapter(val context: Context, val realm: Realm, val data: Real
         fun qm(q: Int) = context.resources.getQuantityString(R.plurals.minutes, q, q)
         fun qd(q: Int) = context.resources.getQuantityString(R.plurals.days, q, q)
 
-        stats = listOf(
+        stats.clear()
+        stats.addAll(listOf(
                 StatsAdapter.MeditationStat("Current Run Streak", qd(currentRun)),
                 StatsAdapter.MeditationStat("Best Run Streak", qd(bestRun)),
                 StatsAdapter.MeditationStat("Number of Sessions", data.size().toString()),
                 StatsAdapter.MeditationStat("Average Session Length", qm(avgSessionDuration)),
                 StatsAdapter.MeditationStat("Total Meditation Time", qm(totalTimeMeditatingMinutes))
-        )
+        ))
 
         ShortcutBadger.setBadge(context, currentRun)
     }

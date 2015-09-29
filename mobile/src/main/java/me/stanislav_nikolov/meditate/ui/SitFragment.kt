@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.app.Fragment
+import android.support.v4.util.Pair
 import android.support.v7.widget.CardView
 import android.view.LayoutInflater
 import android.view.View
@@ -53,12 +54,22 @@ public class SitFragment : android.support.v4.app.Fragment() {
         }
 
         fabStart!!.setOnClickListener {
-            val preparationLength: Long = 5
-            val activity = MeditationSessionActivity.newInstance(activity, sessionLengthMinutes * 60, preparationLength)
+            val overrideLengths = false
+            var preparationLength: Long
+            var sessionLength: Long
+
+            if (!overrideLengths) {
+                preparationLength = 15L
+                sessionLength = sessionLengthMinutes * 60
+            } else {
+                preparationLength = 5L
+                sessionLength = 10L
+            }
+
+            val activity = MeditationSessionActivity.newInstance(activity, sessionLength, preparationLength)
             val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
                     getActivity(),
-                    android.support.v4.util.Pair<View, String>(timerView, getString(R.string.timerTransition)),
-                    android.support.v4.util.Pair<View, String>(textViewTime, getString(R.string.timeMinutesTransition))
+                    Pair.create(timerView as View, getString(R.string.timerTransition))
             )
             getActivity().startActivityForResult(activity, 0, options.toBundle())
         }
