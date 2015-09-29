@@ -106,6 +106,8 @@ public class LogAdapter(val realm: Realm, val data: RealmResults<DbMeditationSes
             subtitle = v.findViewById(R.id.textViewDuration) as TextView
             run = v.findViewById(R.id.runIndicator) as ImageView
 
+            selectionModeStateListAnimator = null
+
             v.setOnClickListener {
                 if (multiSelector.tapSelection(this)) {
                     if (multiSelector.selectedPositions.size() == 0) {
