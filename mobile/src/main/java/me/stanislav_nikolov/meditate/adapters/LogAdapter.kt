@@ -12,13 +12,13 @@ import com.bignerdranch.android.multiselector.MultiSelector
 import com.bignerdranch.android.multiselector.SwappingHolder
 import io.realm.Realm
 import io.realm.RealmResults
+import me.stanislav_nikolov.meditate.BuildConfig
 import me.stanislav_nikolov.meditate.R
 import me.stanislav_nikolov.meditate.db.*
 import me.stanislav_nikolov.meditate.getRuns
 import me.stanislav_nikolov.meditate.toHMS
 import timber.log.Timber
 import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -108,10 +108,8 @@ public class LogAdapter(val context: Context, val realm: Realm, val data: RealmR
             subtitle = v.findViewById(R.id.textViewDuration) as TextView
             run = v.findViewById(R.id.runIndicator) as ImageView
 
-            try {
+            if (BuildConfig.VERSION_CODE >= 21) {
                 selectionModeStateListAnimator = null
-            } catch (e: NoClassDefFoundError) {
-                Timber.d(e, "No class found!")
             }
 
             v.setOnClickListener {
