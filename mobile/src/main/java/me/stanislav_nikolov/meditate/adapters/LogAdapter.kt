@@ -108,7 +108,11 @@ public class LogAdapter(val context: Context, val realm: Realm, val data: RealmR
             subtitle = v.findViewById(R.id.textViewDuration) as TextView
             run = v.findViewById(R.id.runIndicator) as ImageView
 
-            selectionModeStateListAnimator = null
+            try {
+                selectionModeStateListAnimator = null
+            } catch (e: NoClassDefFoundError) {
+                Timber.d(e, "No class found!")
+            }
 
             v.setOnClickListener {
                 if (multiSelector.tapSelection(this)) {
