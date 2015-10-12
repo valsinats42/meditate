@@ -2,12 +2,17 @@ package me.stanislav_nikolov.meditate.ui
 
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityOptionsCompat
+import android.support.v4.app.Fragment
 import android.support.v4.util.Pair
 import android.support.v7.widget.CardView
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import io.realm.Realm
 import me.stanislav_nikolov.meditate.R
+import me.stanislav_nikolov.meditate.db.DbMeditationSession
+import me.stanislav_nikolov.meditate.graph
+import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass.
@@ -17,11 +22,9 @@ import me.stanislav_nikolov.meditate.R
  * Use the [SitFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-public class SitFragment : android.support.v4.app.Fragment() {
+public class SitFragment : Fragment() {
 
-    private val DEFAULT_SESSION_LENGTH: Long = 10
-
-    var sessionLengthMinutes = DEFAULT_SESSION_LENGTH
+    var sessionLengthMinutes: Long = 0
 
     // UI
     var buttonMinusTime: Button? = null
@@ -80,9 +83,16 @@ public class SitFragment : android.support.v4.app.Fragment() {
             getActivity().startActivityForResult(activity, 0, options.toBundle())
         }
 
+        retrieveLastSessionLength()
+
         updateUi()
 
         return view
+    }
+
+    private fun retrieveLastSessionLength() {
+        var sessions = realm.allObjectsSorted(DbMeditationSession::class.java, "endTime", false)
+        sessionLengthMinutes = sessions.firstOrNull()?.initialDurationSeconds?.div(60L) ?: 10L
     }
 
     override fun onDestroyView() {

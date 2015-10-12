@@ -9,6 +9,7 @@ import dagger.Component;
 import io.realm.Realm;
 import me.stanislav_nikolov.meditate.ui.LogFragment;
 import me.stanislav_nikolov.meditate.ui.MeditationSessionActivity;
+import me.stanislav_nikolov.meditate.ui.SitFragment;
 import me.stanislav_nikolov.meditate.ui.StatsFragment;
 
 /**
@@ -19,6 +20,7 @@ import me.stanislav_nikolov.meditate.ui.StatsFragment;
         modules = MeditateAppModule.class
 )
 public interface MeditateComponent {
+    void inject(SitFragment fragment);
     void inject(StatsFragment fragment);
     void inject(LogFragment fragment);
     void inject(MeditationSessionActivity fragment);
