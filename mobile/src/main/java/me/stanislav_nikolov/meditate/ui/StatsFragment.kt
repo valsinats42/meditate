@@ -20,7 +20,7 @@ public class StatsFragment : Fragment() {
         return inflater.inflate(me.stanislav_nikolov.meditate.R.layout.fragment_stats, container, false)
     }
 
-    @Inject lateinit val realm: Realm
+    @Inject lateinit var realm: Realm
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

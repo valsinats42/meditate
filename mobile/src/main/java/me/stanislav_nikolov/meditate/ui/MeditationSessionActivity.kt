@@ -38,8 +38,8 @@ public class MeditationSessionActivity : AppCompatActivity() {
     lateinit var layout: CoordinatorLayout
     lateinit var fabStop: FloatingActionButton
 
-    @Inject lateinit val soundPool: SoundPool
-    @Inject lateinit val realm: Realm
+    @Inject lateinit var soundPool: SoundPool
+    @Inject lateinit var realm: Realm
 
     companion object {
         val ARG_TIMER_LENGTH = "timerLength"
@@ -63,7 +63,7 @@ public class MeditationSessionActivity : AppCompatActivity() {
         bindViews()
         bindEvents()
 
-        minutes.text = "${sessionLength/60} min"
+        minutes.text = getString(R.string.x_min, sessionLength / 60)
 
         preparationTimer = PreparationTimer(preparationTime)
         preparationTimer?.start()
@@ -74,9 +74,9 @@ public class MeditationSessionActivity : AppCompatActivity() {
     }
 
     private fun showAbortSnackbar() {
-        snackbar = Snackbar.make(layout, "Abort incomplete session?", Snackbar.LENGTH_SHORT)
+        snackbar = Snackbar.make(layout, R.string.abort_incomplete_session, Snackbar.LENGTH_SHORT)
         with(snackbar!!) {
-            setAction("Abort", {
+            setAction(R.string.abort, {
                 saveSession()
                 supportFinishAfterTransition()
             })
@@ -110,7 +110,8 @@ public class MeditationSessionActivity : AppCompatActivity() {
     }
 
     private fun showStartingSnackBar() {
-        snackbar = Snackbar.make(layout, "Starting session in $preparationTime seconds...", Snackbar.LENGTH_INDEFINITE)
+        val text = getString(R.string.starting_session, preparationTime)
+        snackbar = Snackbar.make(layout, text, Snackbar.LENGTH_INDEFINITE)
         snackbar?.let {
             it.setCallback(object : Snackbar.Callback() {
                 override fun onDismissed(snackbar: Snackbar?, event: Int) {
@@ -154,7 +155,8 @@ public class MeditationSessionActivity : AppCompatActivity() {
     inner class PreparationTimer(time: Long) {
         val timer = object : CountDownTimer(time * DateUtils.SECOND_IN_MILLIS, DateUtils.SECOND_IN_MILLIS) {
             override fun onTick(millisUntilFinished: Long) {
-                snackbar?.setText("Starting session in ${millisUntilFinished / 1000}s...")
+                val text = getString(R.string.starting_session, millisUntilFinished / 1000)
+                snackbar?.setText(text)
             }
 
             override fun onFinish() {
@@ -180,8 +182,8 @@ public class MeditationSessionActivity : AppCompatActivity() {
         val timer = object : CountDownTimer(time * DateUtils.SECOND_IN_MILLIS, DateUtils.SECOND_IN_MILLIS) {
             override fun onTick(millisUntilFinished: Long) {
                 val (h, m, s) = secondsToHMS(millisUntilFinished / 1000)
-                minutes.text = "${60 * h + m} min"
-                seconds.text = "$s s"
+                minutes.text = getString(R.string.x_min, 60 * h + m);
+                seconds.text = getString(R.string.x_s, s)
             }
 
             override fun onFinish() {
@@ -209,8 +211,8 @@ public class MeditationSessionActivity : AppCompatActivity() {
                 val (h, m, s) = secondsToHMS(currentTime)
 
                 runOnUiThread {
-                    minutes.text = "${60 * h + m} min"
-                    seconds.text = "$s s"
+                    minutes.text = getString(R.string.x_min, 60 * h + m);
+                    seconds.text = getString(R.string.x_s, s)
                 }
             }
         }

@@ -24,7 +24,7 @@ import javax.inject.Inject
 public class LogFragment : Fragment() {
     var recyclerView: RecyclerView? = null
 
-    @Inject lateinit val realm: Realm
+    @Inject lateinit var realm: Realm
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         (activity.application as MeditateApp).graph.inject(this)
@@ -32,7 +32,7 @@ public class LogFragment : Fragment() {
         val view = inflater.inflate(me.stanislav_nikolov.meditate.R.layout.fragment_log, container, false)
 
         val results = realm.allObjectsSorted(DbMeditationSession::class.java, "endTime", false)
-        val adapter = LogAdapter(realm, results)
+        val adapter = LogAdapter(context, realm, results)
 
 //        exportData(results)
 

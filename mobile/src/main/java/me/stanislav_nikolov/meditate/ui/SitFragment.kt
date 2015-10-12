@@ -1,14 +1,10 @@
 package me.stanislav_nikolov.meditate.ui
 
-import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityOptionsCompat
-import android.support.v4.app.Fragment
 import android.support.v4.util.Pair
 import android.support.v7.widget.CardView
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import me.stanislav_nikolov.meditate.R
@@ -43,14 +39,20 @@ public class SitFragment : android.support.v4.app.Fragment() {
         textViewTime = view.findViewById(R.id.textViewTime) as TextView
         timerView = view.findViewById(R.id.timerView) as CardView
 
-        buttonMinusTime!!.setOnClickListener {
-            if (sessionLengthMinutes > 5) sessionLengthMinutes -= 5
-            updateUi()
+        with(buttonMinusTime!!) {
+            text = getString(R.string.minus_x_min, 5)
+            setOnClickListener {
+                if (sessionLengthMinutes > 5) sessionLengthMinutes -= 5
+                updateUi()
+            }
         }
 
-        buttonPlusTime!!.setOnClickListener {
-            sessionLengthMinutes += 5
-            updateUi()
+        with(buttonPlusTime!!) {
+            text = getString(R.string.plus_x_min, 5)
+            setOnClickListener {
+                sessionLengthMinutes += 5
+                updateUi()
+            }
         }
 
         fabStart!!.setOnClickListener {
@@ -90,7 +92,7 @@ public class SitFragment : android.support.v4.app.Fragment() {
     }
 
     private fun updateUi() {
-        textViewTime?.text = "$sessionLengthMinutes min"
+        textViewTime?.text = getString(R.string.x_min, sessionLengthMinutes)
     }
 
     companion object {

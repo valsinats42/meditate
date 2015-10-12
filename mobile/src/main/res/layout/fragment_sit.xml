@@ -69,8 +69,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:text="@string/minus_5min"
                     style="@style/Base.Widget.AppCompat.Button.Borderless.Colored" />
+                    android:text="@string/minus_x_min"
 
                 <Button
                     android:id="@+id/buttonPlusTime"
@@ -78,8 +78,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
-                    android:text="@string/plus_5min"
                     style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+                    android:text="@string/plus_x_min"
                     />
 
             </RelativeLayout>
