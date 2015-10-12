@@ -24,3 +24,6 @@
 -keep @io.realm.annotations.RealmModule class *
 -dontwarn javax.**
 -dontwarn io.realm.**
+
+# Timber
+-dontwarn org.jetbrains.annotations.**
