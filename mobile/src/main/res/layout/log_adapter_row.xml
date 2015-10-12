@@ -29,7 +29,7 @@
     </LinearLayout>
 
     <ImageView
-        android:src="@drawable/run_indicator_only"
+        android:src="@drawable/run_indicator_middle"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:id="@+id/runIndicator" />

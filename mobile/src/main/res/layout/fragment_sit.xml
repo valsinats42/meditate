@@ -50,9 +50,9 @@
                 android:text="10 min"
                 android:transitionName="@string/timeMinutesTransition"
                 android:layout_gravity="center"
+                android:gravity="center"
                 style="@style/TextAppearance.AppCompat.Display3"
-                android:textColor="@color/primary_light"
-                android:gravity="center" />
+                />
 
             <View
                 android:layout_width="match_parent"
@@ -69,8 +69,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    style="@style/Base.Widget.AppCompat.Button.Borderless.Colored" />
                     android:text="@string/minus_x_min"
+                    style="@style/Base.Widget.AppCompat.Button.Borderless" />
 
                 <Button
                     android:id="@+id/buttonPlusTime"
@@ -78,8 +78,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
-                    style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
                     android:text="@string/plus_x_min"
+                    style="@style/Base.Widget.AppCompat.Button.Borderless"
                     />
 
             </RelativeLayout>
