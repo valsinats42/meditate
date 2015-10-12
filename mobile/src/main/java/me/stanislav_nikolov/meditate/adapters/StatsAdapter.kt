@@ -40,9 +40,9 @@ public class StatsAdapter(val context: Context, val realm: Realm, val data: Real
     }
 
     init {
-        calculateStats()
-
         realm.addChangeListener(changeListener)
+
+        calculateStats()
     }
 
     private fun calculateStats() {
