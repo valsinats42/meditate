@@ -25,7 +25,7 @@ public class StatsFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity.application as MeditateApp).graph.inject(this)
+        graph().inject(this)
 
         val data = realm.allObjectsSorted(DbMeditationSession::class.java, "endTime", false)
         val adapter = StatsAdapter(context, realm, data)

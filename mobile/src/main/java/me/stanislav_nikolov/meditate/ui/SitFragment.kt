@@ -30,7 +30,11 @@ public class SitFragment : android.support.v4.app.Fragment() {
     var textViewTime: TextView? = null
     var timerView: CardView? = null
 
+    @Inject lateinit var realm: Realm
+
     override fun onCreateView(inflater: android.view.LayoutInflater, container: android.view.ViewGroup?, savedInstanceState: android.os.Bundle?): android.view.View? {
+        graph().inject(this)
+
         val view = inflater.inflate(me.stanislav_nikolov.meditate.R.layout.fragment_sit, container, false)
 
         buttonMinusTime = view.findViewById(R.id.buttonMinusTime) as Button

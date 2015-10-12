@@ -10,12 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import io.realm.Realm
 import io.realm.RealmResults
-import me.stanislav_nikolov.meditate.MeditateApp
 import me.stanislav_nikolov.meditate.R
 import me.stanislav_nikolov.meditate.adapters.LogAdapter
 import me.stanislav_nikolov.meditate.db.DbMeditationSession
 import me.stanislav_nikolov.meditate.db.getEndDateTime
 import me.stanislav_nikolov.meditate.db.getStartDateTime
+import me.stanislav_nikolov.meditate.graph
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
@@ -27,7 +27,7 @@ public class LogFragment : Fragment() {
     @Inject lateinit var realm: Realm
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        (activity.application as MeditateApp).graph.inject(this)
+        graph().inject(this)
 
         val view = inflater.inflate(me.stanislav_nikolov.meditate.R.layout.fragment_log, container, false)
 
@@ -73,12 +73,11 @@ public class LogFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+
         recyclerView = null
     }
 
     companion object {
-        public fun newInstance(): LogFragment {
-            return LogFragment()
-        }
+        public fun newInstance(): LogFragment = LogFragment()
     }
 }

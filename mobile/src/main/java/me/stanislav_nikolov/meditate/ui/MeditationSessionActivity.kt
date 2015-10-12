@@ -12,11 +12,8 @@ import android.view.View
 import android.widget.TextView
 import hirondelle.date4j.DateTime
 import io.realm.Realm
-import me.stanislav_nikolov.meditate.MeditateApp
-import me.stanislav_nikolov.meditate.R
+import me.stanislav_nikolov.meditate.*
 import me.stanislav_nikolov.meditate.db.DbMeditationSession
-import me.stanislav_nikolov.meditate.secondsToHMS
-import me.stanislav_nikolov.meditate.toDate
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -57,7 +54,7 @@ public class MeditationSessionActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_meditation_session)
 
-        (application as MeditateApp).graph.inject(this)
+        graph().inject(this)
 
         loadExtras()
         bindViews()

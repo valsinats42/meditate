@@ -1,10 +1,9 @@
 package me.stanislav_nikolov.meditate
 
+import android.app.Activity
+import android.support.v4.app.Fragment
 import hirondelle.date4j.DateTime
-import me.stanislav_nikolov.meditate.db.DbMeditationSession
-import me.stanislav_nikolov.meditate.db.getAdjustedEndTime
-import java.util.Date
-import java.util.TimeZone
+import java.util.*
 
 /**
  * Created by stanley on 10.09.15.
@@ -50,3 +49,5 @@ fun getRuns(sessions: List<DateTime>): List<SessionRun> {
 
 fun Date.toDateTime() = DateTime.forInstant(this.time, TimeZone.getDefault())
 fun DateTime.toDate() = Date(getMilliseconds(TimeZone.getDefault()))
+fun Fragment.graph() = (activity.application as MeditateApp).graph
+fun Activity.graph() = (application as MeditateApp).graph
