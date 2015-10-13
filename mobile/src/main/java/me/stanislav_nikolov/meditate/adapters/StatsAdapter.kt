@@ -13,10 +13,7 @@ import io.realm.Realm
 import io.realm.RealmResults
 import me.leolin.shortcutbadger.ShortcutBadger
 import me.stanislav_nikolov.meditate.R
-import me.stanislav_nikolov.meditate.db.DbMeditationSession
-import me.stanislav_nikolov.meditate.db.endsTodayAdjusted
-import me.stanislav_nikolov.meditate.db.getAdjustedEndTime
-import me.stanislav_nikolov.meditate.db.getDuration
+import me.stanislav_nikolov.meditate.db.*
 import me.stanislav_nikolov.meditate.getRuns
 import timber.log.Timber
 import java.util.*
@@ -26,10 +23,11 @@ import java.util.*
  */
 
 
-public class StatsAdapter(val context: Context, val realm: Realm, val data: RealmResults<DbMeditationSession>): RecyclerView.Adapter<StatsAdapter.ViewHolder>() {
+public class StatsAdapter(val context: Context, val db: SessionDb): RecyclerView.Adapter<StatsAdapter.ViewHolder>() {
 
     data class MeditationStat(val name: String, val value: String)
 
+    val data: RealmResults<DbMeditationSession>
     val stats = ArrayList<MeditationStat>()
 
     private val changeListener = {
@@ -40,7 +38,8 @@ public class StatsAdapter(val context: Context, val realm: Realm, val data: Real
     }
 
     init {
-        realm.addChangeListener(changeListener)
+        data = db.allSessions
+        db.addChangeListener(changeListener)
 
         calculateStats()
     }

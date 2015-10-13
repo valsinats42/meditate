@@ -11,6 +11,7 @@ import android.widget.TextView
 import io.realm.Realm
 import me.stanislav_nikolov.meditate.R
 import me.stanislav_nikolov.meditate.db.DbMeditationSession
+import me.stanislav_nikolov.meditate.db.SessionDb
 import me.stanislav_nikolov.meditate.graph
 import javax.inject.Inject
 
@@ -33,7 +34,7 @@ public class SitFragment : Fragment() {
     var textViewTime: TextView? = null
     var timerView: CardView? = null
 
-    @Inject lateinit var realm: Realm
+    @Inject lateinit var db: SessionDb
 
     override fun onCreateView(inflater: android.view.LayoutInflater, container: android.view.ViewGroup?, savedInstanceState: android.os.Bundle?): android.view.View? {
         graph().inject(this)
@@ -91,7 +92,7 @@ public class SitFragment : Fragment() {
     }
 
     private fun retrieveLastSessionLength() {
-        var sessions = realm.allObjectsSorted(DbMeditationSession::class.java, "endTime", false)
+        var sessions = db.allSessions
         sessionLengthMinutes = sessions.firstOrNull()?.initialDurationSeconds?.div(60L) ?: 10L
     }
 

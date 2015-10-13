@@ -25,15 +25,23 @@ import java.util.*
  * Created by stanley on 05.09.15.
  */
 
-public class LogAdapter(val context: Context, val realm: Realm, val data: RealmResults<DbMeditationSession>): RecyclerView.Adapter<LogAdapter.ViewHolder>() {
+public class LogAdapter(val context: Context, val db: SessionDb): RecyclerView.Adapter<LogAdapter.ViewHolder>() {
 
     enum class ListPosition { ALONE, FIRST, MIDDLE, LAST }
 
+    private val data: RealmResults<DbMeditationSession>
     private var runs: List<ListPosition> = emptyList()
 
     private val changeListener = {
         updateRuns()
         notifyDataSetChanged()
+    }
+
+    init {
+        data = db.allSessions
+        db.addChangeListener(changeListener)
+
+        updateRuns()
     }
 
     private fun updateRuns() {
@@ -49,12 +57,6 @@ public class LogAdapter(val context: Context, val realm: Realm, val data: RealmR
         Timber.d("Updated runs: data size: %d, runs size: %d", data.size(), runs.size())
     }
 
-    init {
-        realm.addChangeListener(changeListener)
-
-        updateRuns()
-    }
-
     val multiSelector = MultiSelector()
 
     private var actionMode: ActionMode? = null
@@ -68,20 +70,9 @@ public class LogAdapter(val context: Context, val realm: Realm, val data: RealmR
         }
 
         override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-            realm.beginTransaction()
-
             val selectedSessionuuids = multiSelector.selectedPositions.map { data[it].uuid }
-            // TODO fix this when there's a sane way to remove multiple results
-            for (s in selectedSessionuuids) {
-                for (i in 0 .. data.lastIndex) {
-                    if (data[i].uuid == s) {
-                        data.remove(i)
-                        break
-                    }
-                }
-            }
 
-            realm.commitTransaction()
+            db.deleteSessions(selectedSessionuuids)
 
             notifyDataSetChanged()
 

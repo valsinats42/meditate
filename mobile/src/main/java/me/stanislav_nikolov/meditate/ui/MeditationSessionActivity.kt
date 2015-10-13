@@ -14,6 +14,7 @@ import hirondelle.date4j.DateTime
 import io.realm.Realm
 import me.stanislav_nikolov.meditate.*
 import me.stanislav_nikolov.meditate.db.DbMeditationSession
+import me.stanislav_nikolov.meditate.db.SessionDb
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
@@ -36,7 +37,7 @@ public class MeditationSessionActivity : AppCompatActivity() {
     lateinit var fabStop: FloatingActionButton
 
     @Inject lateinit var soundPool: SoundPool
-    @Inject lateinit var realm: Realm
+    @Inject lateinit var db: SessionDb
 
     companion object {
         val ARG_TIMER_LENGTH = "timerLength"
@@ -93,17 +94,13 @@ public class MeditationSessionActivity : AppCompatActivity() {
     }
 
     private fun saveSession() {
-        realm.beginTransaction()
+        val session = DbMeditationSession()
+        session.uuid = UUID.randomUUID().toString()
+        session.initialDurationSeconds = originalSessionLength.toInt()
+        session.startTime = startTime!!.toDate()
+        session.endTime = DateTime.now(TimeZone.getDefault()).toDate()
 
-        val ms = realm.createObject(DbMeditationSession::class.java)
-        ms.uuid = UUID.randomUUID().toString()
-        ms.initialDurationSeconds = originalSessionLength.toInt()
-        ms.startTime = startTime!!.toDate()
-        ms.endTime = DateTime.now(TimeZone.getDefault()).toDate()
-
-        Timber.d("Saving new session: %s -- %s", ms.startTime, ms.endTime)
-
-        realm.commitTransaction()
+        db.saveSession(session)
     }
 
     private fun showStartingSnackBar() {
