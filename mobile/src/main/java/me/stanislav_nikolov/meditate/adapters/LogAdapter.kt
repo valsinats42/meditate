@@ -1,9 +1,9 @@
 package me.stanislav_nikolov.meditate.adapters
 
+import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ActionMode
 import android.support.v7.widget.RecyclerView
-import android.view
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
@@ -12,18 +12,20 @@ import com.bignerdranch.android.multiselector.MultiSelector
 import com.bignerdranch.android.multiselector.SwappingHolder
 import io.realm.Realm
 import io.realm.RealmResults
+import me.stanislav_nikolov.meditate.BuildConfig
 import me.stanislav_nikolov.meditate.R
 import me.stanislav_nikolov.meditate.db.*
 import me.stanislav_nikolov.meditate.getRuns
 import me.stanislav_nikolov.meditate.toHMS
 import timber.log.Timber
+import java.text.DateFormat
 import java.util.*
 
 /**
  * Created by stanley on 05.09.15.
  */
 
-public class LogAdapter(val realm: Realm, val data: RealmResults<DbMeditationSession>): RecyclerView.Adapter<LogAdapter.ViewHolder>() {
+public class LogAdapter(val context: Context, val realm: Realm, val data: RealmResults<DbMeditationSession>): RecyclerView.Adapter<LogAdapter.ViewHolder>() {
 
     enum class ListPosition { ALONE, FIRST, MIDDLE, LAST }
 
@@ -93,7 +95,7 @@ public class LogAdapter(val realm: Realm, val data: RealmResults<DbMeditationSes
 
     fun updateTitle() {
         val n = multiSelector.selectedPositions.size()
-        actionMode?.title = "$n session${if (n != 1) "s" else ""} selected"
+        actionMode?.title = context.resources.getQuantityString(R.plurals.sessions_selected, n, n)
     }
 
     inner public class ViewHolder(v: View) : SwappingHolder(v, multiSelector) {
@@ -105,6 +107,10 @@ public class LogAdapter(val realm: Realm, val data: RealmResults<DbMeditationSes
             title = v.findViewById(R.id.textViewDate) as TextView
             subtitle = v.findViewById(R.id.textViewDuration) as TextView
             run = v.findViewById(R.id.runIndicator) as ImageView
+
+            if (BuildConfig.VERSION_CODE >= 21) {
+                selectionModeStateListAnimator = null
+            }
 
             v.setOnClickListener {
                 if (multiSelector.tapSelection(this)) {
@@ -137,18 +143,24 @@ public class LogAdapter(val realm: Realm, val data: RealmResults<DbMeditationSes
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val session = data[position]
 
-        val startDate = if (session.endsTodayAdjusted()) {
-            "Today"
-        } else {
-            session.getStartDateTime().format("WWWW, MMMM D", Locale.getDefault())
+        val df = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault())
+
+        var endDate = when {
+            session.endsTodayAdjusted() -> context.getString(R.string.today)
+            session.endsYesterdayAdjusted() -> context.getString(R.string.yesterday)
+            else -> df.format(session.endTime)
         }
+        if (!session.getAdjustedEndTime().isSameDayAs(session.getEndDateTime())) {
+            endDate += " (+1)"
+        }
+
         var startTime = session.getStartDateTime().format("hh:mm")
         var endTime = session.getEndDateTime().format("hh:mm")
 
         val (h, m) = session.getDuration().toHMS()
         val duration = when {
-            h > 0   -> "$h h $m min"
-            else    -> "$m min"
+            h > 0   -> context.getString(R.string.x_h_y_min)
+            else    -> context.getString(R.string.x_min, m)
         }
 
         val runIndicator = when (runs[position]) {
@@ -158,7 +170,7 @@ public class LogAdapter(val realm: Realm, val data: RealmResults<DbMeditationSes
             ListPosition.LAST -> R.drawable.run_indicator_bottom
         }
 
-        holder.title.text = startDate
+        holder.title.text = endDate
         holder.subtitle.text = "$duration ($startTime\u2013$endTime)"
         holder.run.setImageResource(runIndicator)
     }

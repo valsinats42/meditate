@@ -27,6 +27,7 @@ val DAY_START_M = 0
 fun DbMeditationSession.getStartDateTime() = startTime!!.toDateTime()
 fun DbMeditationSession.getEndDateTime() = endTime!!.toDateTime()
 fun DbMeditationSession.getDuration() = getStartDateTime().numSecondsFrom(getEndDateTime())
-fun DbMeditationSession.endsTodayAdjusted() = getEndDateTime().isSameDayAs(DateTime.today(TimeZone.getDefault()))
+fun DbMeditationSession.endsTodayAdjusted() = getAdjustedEndTime().isSameDayAs(DateTime.today(TimeZone.getDefault()))
+fun DbMeditationSession.endsYesterdayAdjusted() = getAdjustedEndTime().plusDays(1).isSameDayAs(DateTime.today(TimeZone.getDefault()))
 fun DbMeditationSession.getAdjustedEndTime() = getEndDateTime()
         .minus(0, 0, 0, DAY_START_H, DAY_START_M, 0, 0, DateTime.DayOverflow.Spillover)

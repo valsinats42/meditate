@@ -27,29 +27,28 @@
             android:background="@color/primary">
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Display3"
                 android:id="@+id/textViewMinutes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:transitionName="@string/timeMinutesTransition"
                 android:layout_weight="1"
-                style="@style/TextAppearance.AppCompat.Display3"
                 android:text="10 min"
                 android:layout_gravity="center_horizontal"
                 android:textAlignment="center"
                 android:gravity="center"
-                android:textColor="@color/primary_light" />
+                />
 
             <TextView
+                style="@style/TextAppearance.AppCompat.Display2"
                 android:id="@+id/textViewSeconds"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="0 s"
                 android:layout_gravity="center_horizontal"
-                style="@style/TextAppearance.AppCompat.Display2"
                 android:textAlignment="center"
                 android:gravity="top"
-                android:textColor="@color/primary_light"
                 android:visibility="invisible" />
         </LinearLayout>
 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Медитирай</string>
+    <string name="abort">Прекъсни</string>
+    <string name="abort_incomplete_session">Прекъсни недовършена сесия?</string>
+    <string name="action_settings">Настойки</string>
+    <string name="average_session_length">Средна продължителност на сесията</string>
+    <string name="best_run_streak">Най-много последователни дни</string>
+    <string name="current_run_streak">Текущи последователни дни</string>
+    <string name="delete">Изтрий</string>
+    <string name="minus_x_min">-%d мин</string>
+    <string name="new_session">Нова сесия</string>
+    <string name="number_of_sessions">Брой сесии</string>
+    <string name="plus_x_min">+%d мин</string>
+    <string name="session_log">Списък със сесии</string>
+    <string name="statistics">Статистика</string>
+    <string name="starting_session">Започване на сесията след %1$d секунди…</string>
+    <string name="title_activity_meditation_session">Медитационна сесия</string>
+    <string name="today">днес</string>
+    <string name="total_meditation_time">Общо време на медитация</string>
+    <string name="x_h_y_min">%1$d ч %2$d мин</string>
+    <string name="x_min">%1$d мин</string>
+    <string name="x_s">%1$d с</string>
+    <string name="yesterday">вчера</string>
+    <plurals name="minutes">
+        <item quantity="one">%d минута</item>
+        <item quantity="other">%d минути</item>
+    </plurals>
+    <plurals name="days">
+        <item quantity="one">%d ден</item>
+        <item quantity="other">%d дни</item>
+    </plurals>
+    <plurals name="sessions_selected">
+        <item quantity="one">%d избрана сесия</item>
+        <item quantity="other">%d избрани сесии</item>
+    </plurals>
+</resources>

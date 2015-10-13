@@ -29,10 +29,19 @@ public class MainActivity : android.support.v7.app.AppCompatActivity() {
         tabLayout = findViewById(R.id.tab_layout) as TabLayout
 
         setSupportActionBar(toolbar)
-        viewPager.adapter = ViewPagerAdapter(supportFragmentManager)
-        tabLayout.setupWithViewPager(viewPager);
-
+        setupTabs()
 //        loadDb()
+    }
+
+    fun setupTabs() {
+        val fragments = listOf(
+                ViewPagerAdapter.F(SitFragment.newInstance(), getString(R.string.new_session)),
+                ViewPagerAdapter.F(StatsFragment.newInstance(), getString(R.string.statistics)),
+                ViewPagerAdapter.F(LogFragment.newInstance(), getString(R.string.session_log))
+        )
+
+        viewPager.adapter = ViewPagerAdapter(supportFragmentManager, fragments)
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     private fun loadDb() {
@@ -49,26 +58,19 @@ public class MainActivity : android.support.v7.app.AppCompatActivity() {
         dates.forEach {
             val m = realm.createObject(DbMeditationSession::class.java)
             m.uuid = java.util.UUID.randomUUID().toString()
-            m.startTime = it.minus(0, 0, 0, 0, 30, 0, 0, hirondelle.date4j.DateTime.DayOverflow.Spillover).toDate()
+            m.startTime = it.minus(0, 0, 0, 0, 30, 0, 0, DateTime.DayOverflow.Spillover).toDate()
             m.endTime = it.toDate()
         }
         realm.commitTransaction()
     }
 
     override fun onCreateOptionsMenu(menu: android.view.Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(me.stanislav_nikolov.meditate.R.menu.menu_main, menu)
+        menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
-    class ViewPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(fragmentManager) {
+    class ViewPagerAdapter(fragmentManager: FragmentManager, val fragments: List<ViewPagerAdapter.F>) : FragmentPagerAdapter(fragmentManager) {
         data class F(val fragment: Fragment, val title: String)
-
-        val fragments = listOf(
-                F(SitFragment.newInstance(), "New Session"),
-                F(StatsFragment.newInstance(), "Statistics"),
-                F(LogFragment.newInstance(), "Session Log")
-        )
 
         override fun getCount() = fragments.size()
 

@@ -40,9 +40,9 @@ public class StatsAdapter(val context: Context, val realm: Realm, val data: Real
     }
 
     init {
-        calculateStats()
-
         realm.addChangeListener(changeListener)
+
+        calculateStats()
     }
 
     private fun calculateStats() {
@@ -60,14 +60,15 @@ public class StatsAdapter(val context: Context, val realm: Realm, val data: Real
 
         fun qm(q: Int) = context.resources.getQuantityString(R.plurals.minutes, q, q)
         fun qd(q: Int) = context.resources.getQuantityString(R.plurals.days, q, q)
+        fun s(id: Int) = context.resources.getString(id)
 
         stats.clear()
         stats.addAll(listOf(
-                StatsAdapter.MeditationStat("Current Run Streak", qd(currentRun)),
-                StatsAdapter.MeditationStat("Best Run Streak", qd(bestRun)),
-                StatsAdapter.MeditationStat("Number of Sessions", data.size().toString()),
-                StatsAdapter.MeditationStat("Average Session Length", qm(avgSessionDuration)),
-                StatsAdapter.MeditationStat("Total Meditation Time", qm(totalTimeMeditatingMinutes))
+                StatsAdapter.MeditationStat(s(R.string.current_run_streak), qd(currentRun)),
+                StatsAdapter.MeditationStat(s(R.string.best_run_streak), qd(bestRun)),
+                StatsAdapter.MeditationStat(s(R.string.number_of_sessions), data.size().toString()),
+                StatsAdapter.MeditationStat(s(R.string.average_session_length), qm(avgSessionDuration)),
+                StatsAdapter.MeditationStat(s(R.string.total_meditation_time), qm(totalTimeMeditatingMinutes))
         ))
 
         ShortcutBadger.setBadge(context, currentRun)
