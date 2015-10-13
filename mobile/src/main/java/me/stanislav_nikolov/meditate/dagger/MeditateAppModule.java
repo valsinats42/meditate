@@ -10,8 +10,6 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 /**
  * Created by stanley on 23.09.15.
@@ -29,14 +27,6 @@ public class MeditateAppModule {
     @Provides
     Application provideApplication() {
         return app;
-    }
-
-    @Singleton
-    @Provides
-    Realm provideRealm() {
-        return Realm.getInstance(new RealmConfiguration.Builder(app)
-//                .inMemory()
-                .build());
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

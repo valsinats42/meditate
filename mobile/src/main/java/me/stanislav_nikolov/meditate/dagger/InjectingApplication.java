@@ -14,6 +14,7 @@ public class InjectingApplication extends Application {
 
         _graph = DaggerMeditateComponent.builder()
                 .meditateAppModule(new MeditateAppModule(this))
+                .onDiskRealmModule(new OnDiskRealmModule())
                 .build();
 
     }
