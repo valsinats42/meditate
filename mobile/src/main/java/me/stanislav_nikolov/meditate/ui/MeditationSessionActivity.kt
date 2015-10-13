@@ -1,6 +1,8 @@
 package me.stanislav_nikolov.meditate.ui
 
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.media.SoundPool
 import android.os.CountDownTimer
 import android.support.design.widget.CoordinatorLayout
@@ -24,7 +26,7 @@ public class MeditationSessionActivity : AppCompatActivity() {
     var preparationTime = 0L
     var sessionLength = 0L
 
-    var snackbar: android.support.design.widget.Snackbar? = null
+    var snackbar: Snackbar? = null
     var preparationTimer: PreparationTimer? = null
     var meditationTimer: MeditationTimer? = null
     var startTime: DateTime? = null
@@ -43,8 +45,8 @@ public class MeditationSessionActivity : AppCompatActivity() {
         val ARG_TIMER_LENGTH = "timerLength"
         val ARG_WARM_UP_PERIOD = "warmUpPeriod"
 
-        fun newInstance(context: android.content.Context, timerLength: Long, warmUpPeriod: Long): android.content.Intent {
-            val result = android.content.Intent(context, MeditationSessionActivity::class.java)
+        fun newInstance(context: Context, timerLength: Long, warmUpPeriod: Long): Intent {
+            val result = Intent(context, MeditationSessionActivity::class.java)
             result.putExtra(ARG_TIMER_LENGTH, timerLength)
             result.putExtra(ARG_WARM_UP_PERIOD, warmUpPeriod)
             return result

@@ -8,10 +8,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.Toolbar
-import hirondelle.date4j.DateTime
 import me.stanislav_nikolov.meditate.R
-import me.stanislav_nikolov.meditate.db.DbMeditationSession
-import me.stanislav_nikolov.meditate.toDate
 
 public class MainActivity : android.support.v7.app.AppCompatActivity() {
 

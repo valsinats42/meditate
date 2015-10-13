@@ -17,17 +17,22 @@ public class LogFragment : Fragment() {
     var recyclerView: RecyclerView? = null
 
     @Inject lateinit var db: SessionDb
+    lateinit var adapter: LogAdapter
 
     companion object {
         public fun newInstance(): LogFragment = LogFragment()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
         graph().inject(this)
 
-        val view = inflater.inflate(me.stanislav_nikolov.meditate.R.layout.fragment_log, container, false)
+        adapter = LogAdapter(context, db)
+    }
 
-        val adapter = LogAdapter(context, db)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_log, container, false)
 
         recyclerView = view!!.findViewById(R.id.recyclerView) as RecyclerView
         with(recyclerView!!) {

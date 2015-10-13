@@ -2,6 +2,7 @@ package me.stanislav_nikolov.meditate.db
 
 import hirondelle.date4j.DateTime
 import io.realm.Realm
+import io.realm.RealmChangeListener
 import me.stanislav_nikolov.meditate.toDate
 import timber.log.Timber
 import javax.inject.Inject
@@ -14,7 +15,7 @@ import javax.inject.Singleton
 class SessionDb @Singleton @Inject constructor(val realm: Realm) {
     public val allSessions = realm.allObjectsSorted(DbMeditationSession::class.java, "endTime", false)
 
-    public fun addChangeListener(changeListener: Function0<Unit>) = realm.addChangeListener(changeListener)
+    public fun addChangeListener(changeListener: RealmChangeListener) = realm.addChangeListener(changeListener)
 
     public fun saveSession(session: DbMeditationSession) {
         realm.beginTransaction()

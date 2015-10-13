@@ -18,17 +18,22 @@ public class StatsFragment : Fragment() {
     @Inject lateinit var db: SessionDb
 
     var recyclerView: RecyclerView? = null
+    lateinit var adapter: StatsAdapter
 
     companion object {
         public fun newInstance(): StatsFragment = StatsFragment()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
         graph().inject(this)
 
-        val view = inflater.inflate(me.stanislav_nikolov.meditate.R.layout.fragment_stats, container, false)
+        adapter = StatsAdapter(context, db)
+    }
 
-        val adapter = StatsAdapter(context, db)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_stats, container, false)
 
         recyclerView = view!!.findViewById(R.id.recyclerView) as RecyclerView
         with(recyclerView!!) {

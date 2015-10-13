@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import io.realm.Realm
+import io.realm.RealmChangeListener
 import io.realm.RealmResults
 import me.leolin.shortcutbadger.ShortcutBadger
 import me.stanislav_nikolov.meditate.R
@@ -30,11 +30,13 @@ public class StatsAdapter(val context: Context, val db: SessionDb): RecyclerView
     val data: RealmResults<DbMeditationSession>
     val stats = ArrayList<MeditationStat>()
 
-    private val changeListener = {
-        Timber.d("Change detected")
+    private val changeListener = object : RealmChangeListener {
+        override fun onChange() {
+            Timber.d("Change detected")
 
-        calculateStats()
-        notifyDataSetChanged()
+            calculateStats()
+            notifyDataSetChanged()
+        }
     }
 
     init {

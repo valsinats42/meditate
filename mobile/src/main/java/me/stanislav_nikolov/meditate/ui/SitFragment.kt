@@ -1,5 +1,6 @@
 package me.stanislav_nikolov.meditate.ui
 
+import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.app.Fragment
@@ -8,11 +9,10 @@ import android.support.v7.widget.CardView
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import io.realm.Realm
 import me.stanislav_nikolov.meditate.R
-import me.stanislav_nikolov.meditate.db.DbMeditationSession
 import me.stanislav_nikolov.meditate.db.SessionDb
 import me.stanislav_nikolov.meditate.graph
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -36,17 +36,31 @@ public class SitFragment : Fragment() {
 
     @Inject lateinit var db: SessionDb
 
-    override fun onCreateView(inflater: android.view.LayoutInflater, container: android.view.ViewGroup?, savedInstanceState: android.os.Bundle?): android.view.View? {
+    companion object {
+        public fun newInstance(): SitFragment = SitFragment()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
         graph().inject(this)
+    }
 
-        val view = inflater.inflate(me.stanislav_nikolov.meditate.R.layout.fragment_sit, container, false)
+    override fun onCreateView(inflater: android.view.LayoutInflater, container: android.view.ViewGroup?, savedInstanceState: android.os.Bundle?): android.view.View? {
+        val view = inflater.inflate(R.layout.fragment_sit, container, false)
 
-        buttonMinusTime = view.findViewById(R.id.buttonMinusTime) as Button
-        buttonPlusTime = view.findViewById(R.id.buttonPlusTime) as Button
-        fabStart = view.findViewById(R.id.fabStartStop) as FloatingActionButton
-        textViewTime = view.findViewById(R.id.textViewTime) as TextView
-        timerView = view.findViewById(R.id.timerView) as CardView
+        bindViews(view)
 
+        bindEvents()
+
+        retrieveLastSessionLength()
+
+        updateUi()
+
+        return view
+    }
+
+    private fun bindEvents() {
         with(buttonMinusTime!!) {
             text = getString(R.string.minus_x_min, 5)
             setOnClickListener {
@@ -83,17 +97,14 @@ public class SitFragment : Fragment() {
             )
             getActivity().startActivityForResult(activity, 0, options.toBundle())
         }
-
-        retrieveLastSessionLength()
-
-        updateUi()
-
-        return view
     }
 
-    private fun retrieveLastSessionLength() {
-        var sessions = db.allSessions
-        sessionLengthMinutes = sessions.firstOrNull()?.initialDurationSeconds?.div(60L) ?: 10L
+    private fun bindViews(view: View) {
+        buttonMinusTime = view.findViewById(R.id.buttonMinusTime) as Button
+        buttonPlusTime = view.findViewById(R.id.buttonPlusTime) as Button
+        fabStart = view.findViewById(R.id.fabStartStop) as FloatingActionButton
+        textViewTime = view.findViewById(R.id.textViewTime) as TextView
+        timerView = view.findViewById(R.id.timerView) as CardView
     }
 
     override fun onDestroyView() {
@@ -106,11 +117,12 @@ public class SitFragment : Fragment() {
         timerView = null
     }
 
-    private fun updateUi() {
-        textViewTime?.text = getString(R.string.x_min, sessionLengthMinutes)
+    private fun retrieveLastSessionLength() {
+        var sessions = db.allSessions
+        sessionLengthMinutes = sessions.firstOrNull()?.initialDurationSeconds?.div(60L) ?: 10L
     }
 
-    companion object {
-        public fun newInstance(): SitFragment = SitFragment()
+    private fun updateUi() {
+        textViewTime?.text = getString(R.string.x_min, sessionLengthMinutes)
     }
 }

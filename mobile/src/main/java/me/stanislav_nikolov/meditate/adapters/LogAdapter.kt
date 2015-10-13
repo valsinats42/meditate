@@ -11,6 +11,7 @@ import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback
 import com.bignerdranch.android.multiselector.MultiSelector
 import com.bignerdranch.android.multiselector.SwappingHolder
 import io.realm.Realm
+import io.realm.RealmChangeListener
 import io.realm.RealmResults
 import me.stanislav_nikolov.meditate.BuildConfig
 import me.stanislav_nikolov.meditate.R
@@ -32,9 +33,11 @@ public class LogAdapter(val context: Context, val db: SessionDb): RecyclerView.A
     private val data: RealmResults<DbMeditationSession>
     private var runs: List<ListPosition> = emptyList()
 
-    private val changeListener = {
-        updateRuns()
-        notifyDataSetChanged()
+    private val changeListener = object : RealmChangeListener {
+        override fun onChange() {
+            updateRuns()
+            notifyDataSetChanged()
+        }
     }
 
     init {
