@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Meditate</string>
 
-    <string name="hello_world" translatable="false">Hello world!</string>
     <string name="action_settings">Settings</string>
 
     <string name="title_activity_meditation_session">Meditation Session</string>
@@ -9,10 +8,25 @@
     <string name="fabTransition" translatable="false">fabTransition</string>
     <string name="timerTransition" translatable="false">timerTransition</string>
     <string name="timeMinutesTransition" translatable="false">timeMinutesTransition</string>
-
     <string name="plus_x_min">+%d min</string>
     <string name="minus_x_min">-%d min</string>
     <string name="delete">Delete</string>
+    <string name="new_session">New Session</string>
+    <string name="statistics">Statistics</string>
+    <string name="session_log">Session Log</string>
+    <string name="abort_incomplete_session">Abort incomplete session?</string>
+    <string name="abort">Abort</string>
+    <string name="x_min">%1$d min</string>
+    <string name="x_h_y_min">%1$d h %2$d min</string>
+    <string name="x_s">%1$d s</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="current_run_streak">Current Run Streak</string>
+    <string name="best_run_streak">Best Run Streak</string>
+    <string name="number_of_sessions">Number of Sessions</string>
+    <string name="average_session_length">Average Session Length</string>
+    <string name="total_meditation_time">Total Meditation Time</string>
+
     <plurals name="minutes">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>
@@ -25,20 +39,8 @@
         <item quantity="one">%s session selected</item>
         <item quantity="other">%d sessions selected</item>
     </plurals>
-    <string name="new_session">New Session</string>
-    <string name="statistics">Statistics</string>
-    <string name="session_log">Session Log</string>
-    <string name="abort_incomplete_session">Abort incomplete session?</string>
-    <string name="abort">Abort</string>
-    <string name="starting_session">Starting session in %1$d seconds…</string>
-    <string name="x_min">%1$d min</string>
-    <string name="x_h_y_min">%1$d h %2$d min</string>
-    <string name="x_s">%1$d s</string>
-    <string name="today">Today</string>
-    <string name="yesterday">Yesterday</string>
-    <string name="current_run_streak">Current Run Streak</string>
-    <string name="best_run_streak">Best Run Streak</string>
-    <string name="number_of_sessions">Number of Sessions</string>
-    <string name="average_session_length">Average Session Length</string>
-    <string name="total_meditation_time">Total Meditation Time</string>
+    <plurals name="starting_session">
+        <item quantity="one">Starting session in %1$d second…</item>
+        <item quantity="other">Starting session in %1$d seconds…</item>
+    </plurals>
 </resources>

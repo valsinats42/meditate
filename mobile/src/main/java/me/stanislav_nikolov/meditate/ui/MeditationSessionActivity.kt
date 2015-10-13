@@ -106,7 +106,7 @@ public class MeditationSessionActivity : AppCompatActivity() {
     }
 
     private fun showStartingSnackBar() {
-        val text = getString(R.string.starting_session, preparationTime)
+        val text = resources.getQuantityString(R.plurals.starting_session, preparationTime.toInt(), preparationTime)
         snackbar = Snackbar.make(layout, text, Snackbar.LENGTH_INDEFINITE)
         snackbar?.let {
             it.setCallback(object : Snackbar.Callback() {
@@ -151,7 +151,8 @@ public class MeditationSessionActivity : AppCompatActivity() {
     inner class PreparationTimer(time: Long) {
         val timer = object : CountDownTimer(time * DateUtils.SECOND_IN_MILLIS, DateUtils.SECOND_IN_MILLIS) {
             override fun onTick(millisUntilFinished: Long) {
-                val text = getString(R.string.starting_session, millisUntilFinished / 1000)
+                val s = millisUntilFinished.toInt() / 1000
+                val text = resources.getQuantityString(R.plurals.starting_session, s, s)
                 snackbar?.setText(text)
             }
 
