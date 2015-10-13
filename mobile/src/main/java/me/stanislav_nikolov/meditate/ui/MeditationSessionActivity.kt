@@ -135,7 +135,6 @@ public class MeditationSessionActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
 
-        soundPool.release()
         snackbar?.dismiss()
         preparationTimer?.cancel()
         meditationTimer?.cancel()
