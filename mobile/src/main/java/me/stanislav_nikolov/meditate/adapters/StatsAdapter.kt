@@ -54,7 +54,19 @@ public class StatsAdapter(val context: Context, val db: SessionDb): RecyclerView
 
         val runs = getRuns(data map { it.getStartDateTime().adjustMidnigth() })
 
-        val currentRun = if (!data.isEmpty() && data[0].getStartDateTime().isSameDayAs(today())) { runs[0].run } else { 0 }
+        fun DateTime.isAdjustedToday() = adjustMidnigth().isSameDayAs(today().adjustMidnigth())
+        fun DateTime.isAdjustedYesterday() = adjustMidnigth().isSameDayAs(today().minusDays(1).adjustMidnigth())
+
+        var doneToday = false
+        val currentRun = when {
+            data.isEmpty() -> 0
+            data[0].getStartDateTime().isAdjustedToday() -> {
+                doneToday = true
+                runs[0].run
+            }
+            data[0].getStartDateTime().isAdjustedYesterday() -> runs[0].run
+            else -> 0
+        }
 
         val bestRun = runs.map({ it.run }).max() ?: 0
 
@@ -71,9 +83,15 @@ public class StatsAdapter(val context: Context, val db: SessionDb): RecyclerView
         fun qd(q: Int) = res.getQuantityString(R.plurals.days, q, q)
         fun s(id: Int) = res.getString(id)
 
+        val inclusionSuffix = when {
+            currentRun == 0 -> ""
+            doneToday -> " (${res.getString(R.string.including_today)})"
+            else -> " (${res.getString(R.string.excluding_today)})"
+        }
+
         stats.clear()
         stats.addAll(listOf(
-                StatsAdapter.MeditationStat(s(R.string.current_run_streak), qd(currentRun)),
+                StatsAdapter.MeditationStat(s(R.string.current_run_streak), qd(currentRun) + inclusionSuffix),
                 StatsAdapter.MeditationStat(s(R.string.best_run_streak), qd(bestRun)),
                 StatsAdapter.MeditationStat(s(R.string.number_of_sessions), data.size().toString()),
                 StatsAdapter.MeditationStat(s(R.string.average_session_length), qm(avgSessionDuration)),

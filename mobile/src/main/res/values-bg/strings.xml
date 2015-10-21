@@ -37,4 +37,6 @@
         <item quantity="one">Започване на сесията след %1$d секунда…</item>
         <item quantity="other">Започване на сесията след %1$d секунди…</item>
     </plurals>
+    <string name="excluding_today">без днес</string>
+    <string name="including_today">днес вкл.</string>
 </resources>

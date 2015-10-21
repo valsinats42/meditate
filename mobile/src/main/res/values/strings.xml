@@ -26,6 +26,8 @@
     <string name="number_of_sessions">Number of Sessions</string>
     <string name="average_session_length">Average Completed Session Length</string>
     <string name="total_meditation_time">Total Meditation Time</string>
+    <string name="including_today">incl. today</string>
+    <string name="excluding_today">excl. today</string>
 
     <plurals name="minutes">
         <item quantity="one">%d minute</item>
