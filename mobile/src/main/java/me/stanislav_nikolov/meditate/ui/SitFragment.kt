@@ -120,7 +120,7 @@ public class SitFragment : Fragment() {
 
         sessionLengthMinutes = db.allSessions
                 .filter { it.getDuration() >= it.initialDurationSeconds }
-                .firstOrNull()?.initialDurationSeconds?.div(69) ?:
+                .firstOrNull()?.initialDurationSeconds?.div(60) ?:
                 DEFAULT_SESSION_LENGTH
     }
 
