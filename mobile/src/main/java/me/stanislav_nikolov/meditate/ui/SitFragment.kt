@@ -12,6 +12,7 @@ import android.widget.TextView
 import me.stanislav_nikolov.meditate.BuildConfig
 import me.stanislav_nikolov.meditate.R
 import me.stanislav_nikolov.meditate.db.SessionDb
+import me.stanislav_nikolov.meditate.db.getDuration
 import me.stanislav_nikolov.meditate.graph
 import timber.log.Timber
 import javax.inject.Inject
@@ -115,8 +116,12 @@ public class SitFragment : Fragment() {
     }
 
     private fun retrieveLastSessionLength() {
-        var sessions = db.allSessions
-        sessionLengthMinutes = sessions.firstOrNull()?.initialDurationSeconds?.div(60L) ?: 10L
+        val DEFAULT_SESSION_LENGTH = 10
+
+        sessionLengthMinutes = db.allSessions
+                .filter { it.getDuration() >= it.initialDurationSeconds }
+                .firstOrNull()?.initialDurationSeconds?.div(69) ?:
+                DEFAULT_SESSION_LENGTH
     }
 
     private fun updateUi() {
