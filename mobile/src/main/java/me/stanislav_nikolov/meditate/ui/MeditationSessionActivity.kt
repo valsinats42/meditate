@@ -4,33 +4,34 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.media.SoundPool
-import android.os.CountDownTimer
+import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
+import android.support.v4.view.ViewPropertyAnimatorCompat
 import android.support.v7.app.AppCompatActivity
 import android.text.format.DateUtils
 import android.view.View
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
 import android.widget.TextView
 import hirondelle.date4j.DateTime
-import io.realm.Realm
 import me.stanislav_nikolov.meditate.*
 import me.stanislav_nikolov.meditate.db.DbMeditationSession
 import me.stanislav_nikolov.meditate.db.SessionDb
 import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
 public class MeditationSessionActivity : AppCompatActivity() {
-    var preparationTime = 0L
-    var sessionLength = 0L
+    var PREPARATION_TIME = 0
+    var SESSION_LENGTH = 0
 
-    var snackbar: Snackbar? = null
-    var preparationTimer: PreparationTimer? = null
-    var meditationTimer: MeditationTimer? = null
-    var startTime: DateTime? = null
-    var originalSessionLength: Long by Delegates.notNull()
+    var startingSnackBar: Snackbar? = null
+    var abortSnackbar: Snackbar? = null
+    var meditationStartTime: DateTime? = null
+    var preparationStartTime: DateTime? = null
 
     // UI
     lateinit var minutes: TextView
@@ -41,81 +42,129 @@ public class MeditationSessionActivity : AppCompatActivity() {
     @Inject lateinit var soundPool: SoundPool
     @Inject lateinit var db: SessionDb
 
-    companion object {
-        val ARG_TIMER_LENGTH = "timerLength"
-        val ARG_WARM_UP_PERIOD = "warmUpPeriod"
+    val handler: Handler? = Handler()
 
-        fun newInstance(context: Context, timerLength: Long, warmUpPeriod: Long): Intent {
+    fun setTimerText(time: Int) {
+        val (h, m, s) = secondsToHMS(time)
+        minutes.text = getString(R.string.x_min, 60 * h + m);
+        seconds.text = getString(R.string.x_s, s)
+    }
+
+    fun setStartingSnackBarText(timeRemaining: Int) {
+        val text = resources.getQuantityString(R.plurals.starting_session, timeRemaining, timeRemaining)
+        startingSnackBar?.setText(text)
+    }
+
+    val updateUiRunnable: () -> Unit = {
+        // Reschedule every second
+        handler?.postDelayed(updateUiRunnable, 1 * DateUtils.SECOND_IN_MILLIS)
+        Timber.d("Updating UI!")
+
+        val preparationTime = preparationStartTime?.numSecondsFrom(now())?.toInt()
+        val meditationTime = meditationStartTime?.numSecondsFrom(now())?.toInt()
+
+        when {
+            preparationTime != null && preparationTime < PREPARATION_TIME -> {
+                if (startingSnackBar == null) {
+                    startingSnackBar = Snackbar.make(layout, "", Snackbar.LENGTH_INDEFINITE)
+                    startingSnackBar!!.show()
+                }
+
+                setStartingSnackBarText(PREPARATION_TIME - preparationTime)
+            }
+
+            preparationTime != null && preparationTime >= PREPARATION_TIME -> {
+                startingSnackBar?.dismiss()
+
+                preparationStartTime = null
+
+                playTone()
+
+                meditationStartTime = now()
+            }
+
+            meditationTime != null -> {
+                fabStop.visibility = View.VISIBLE
+                seconds.visibility = View.VISIBLE
+
+                when {
+                    meditationTime < SESSION_LENGTH ->
+                        setTimerText(SESSION_LENGTH - meditationTime)
+
+                    meditationTime == SESSION_LENGTH -> {
+                        setTimerText(SESSION_LENGTH)
+
+                        playTone()
+                    }
+
+                    meditationTime > SESSION_LENGTH -> {
+                        fabStop.setImageResource(R.drawable.ic_check_white_24dp)
+                        setTimerText(meditationTime)
+                    }
+                }
+
+            }
+        }
+    }
+
+    val ARG_SAVE_MEDITATION_START_TIME = "meditation_start_time"
+    val ARG_SAVE_PREPARATION_START_TIME = "preparation_start_time"
+
+    companion object {
+        val ARG_PREPARATION_TIME = "timerLength"
+        val ARG_SESSION_LENGTH = "warmUpPeriod"
+
+        fun newInstance(context: Context, timerLength: Int, warmUpPeriod: Int): Intent {
             val result = Intent(context, MeditationSessionActivity::class.java)
-            result.putExtra(ARG_TIMER_LENGTH, timerLength)
-            result.putExtra(ARG_WARM_UP_PERIOD, warmUpPeriod)
+            result.putExtra(ARG_PREPARATION_TIME, timerLength)
+            result.putExtra(ARG_SESSION_LENGTH, warmUpPeriod)
             return result
         }
     }
 
-    override fun onCreate(savedInstanceState: android.os.Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+
+        outState?.putSerializable(ARG_SAVE_PREPARATION_START_TIME, preparationStartTime)
+        outState?.putSerializable(ARG_SAVE_MEDITATION_START_TIME, meditationStartTime)
+    }
+
+    private fun loadExtras(state: Bundle?) {
+        val extras = intent.extras
+        PREPARATION_TIME = extras.getInt(ARG_SESSION_LENGTH)
+        SESSION_LENGTH = extras.getInt(ARG_PREPARATION_TIME)
+
+        if (state != null) {
+            preparationStartTime = state.getSerializable(ARG_SAVE_PREPARATION_START_TIME) as DateTime?
+            meditationStartTime = state.getSerializable(ARG_SAVE_MEDITATION_START_TIME) as DateTime?
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_meditation_session)
 
         graph().inject(this)
 
-        loadExtras()
+        loadExtras(savedInstanceState)
         bindViews()
         bindEvents()
 
-        minutes.text = getString(R.string.x_min, sessionLength / 60)
+        if (meditationStartTime != null && preparationStartTime == null) {
+            preparationStartTime = now()
+        }
 
-        preparationTimer = PreparationTimer(preparationTime)
-        preparationTimer?.start()
+        handler!!.postDelayed(updateUiRunnable, 200)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        handler!!.removeCallbacksAndMessages(null)
     }
 
     private fun bindEvents() {
         fabStop.setOnClickListener { onBackPressed() }
-    }
-
-    private fun showAbortSnackbar() {
-        snackbar = Snackbar.make(layout, R.string.abort_incomplete_session, Snackbar.LENGTH_SHORT)
-        with(snackbar!!) {
-            setAction(R.string.abort, {
-                saveSession()
-                supportFinishAfterTransition()
-            })
-            show()
-        }
-    }
-
-    override fun onBackPressed() {
-        setResult(Activity.RESULT_OK)
-
-        when {
-            preparationTimer != null -> { setResult(Activity.RESULT_CANCELED); supportFinishAfterTransition() }
-            meditationTimer != null -> showAbortSnackbar()
-            meditationTimer == null -> { saveSession(); supportFinishAfterTransition() }
-            else -> supportFinishAfterTransition()
-        }
-    }
-
-    private fun saveSession() {
-        val session = DbMeditationSession()
-        session.uuid = UUID.randomUUID().toString()
-        session.initialDurationSeconds = originalSessionLength.toInt()
-        session.startTime = startTime!!.toDate()
-        session.endTime = DateTime.now(TimeZone.getDefault()).toDate()
-
-        db.saveSession(session)
-    }
-
-    private fun showStartingSnackBar() {
-        val text = resources.getQuantityString(R.plurals.starting_session, preparationTime.toInt(), preparationTime)
-        snackbar = Snackbar.make(layout, text, Snackbar.LENGTH_INDEFINITE)
-        snackbar?.let {
-            it.setCallback(object : Snackbar.Callback() {
-                override fun onDismissed(snackbar: Snackbar?, event: Int) {
-                    fabStop.visibility = View.VISIBLE
-                }
-            })
-            layout.postDelayed({ it.show() }, 200)
-        }
     }
 
     private fun bindViews() {
@@ -125,19 +174,53 @@ public class MeditationSessionActivity : AppCompatActivity() {
         fabStop = findViewById(R.id.fabStartStop) as FloatingActionButton
     }
 
-    private fun loadExtras() {
-        val extras = intent.extras
-        preparationTime = extras.getLong(ARG_WARM_UP_PERIOD)
-        sessionLength = extras.getLong(ARG_TIMER_LENGTH)
-        originalSessionLength = sessionLength
+    private fun showAbortSnackbar() {
+        abortSnackbar = Snackbar.make(layout, R.string.abort_incomplete_session, Snackbar.LENGTH_SHORT)
+        with(abortSnackbar!!) {
+            setAction(R.string.abort, { saveAndFinish() })
+
+            setCallback(object : Snackbar.Callback() {
+                override fun onDismissed(snackbar: Snackbar?, event: Int) {
+                    abortSnackbar = null
+                }
+            })
+
+            show()
+        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    fun finish(result: Int) {
+        setResult(result)
+        supportFinishAfterTransition()
+    }
 
-        snackbar?.dismiss()
-        preparationTimer?.cancel()
-        meditationTimer?.cancel()
+    fun saveAndFinish() {
+        saveSession()
+        finish(Activity.RESULT_OK)
+    }
+
+    override fun onBackPressed() {
+        val meditationTime = meditationStartTime?.numSecondsFrom(now())?.toInt()
+        when {
+            meditationTime == null ->
+                finish(Activity.RESULT_CANCELED)
+
+            meditationTime < SESSION_LENGTH && abortSnackbar == null ->
+                showAbortSnackbar()
+
+            else ->
+                saveAndFinish()
+        }
+    }
+
+    private fun saveSession() {
+        val session = DbMeditationSession()
+        session.uuid = UUID.randomUUID().toString()
+        session.initialDurationSeconds = SESSION_LENGTH
+        session.startTime = meditationStartTime!!.toDate()
+        session.endTime = now().toDate()
+
+        db.saveSession(session)
     }
 
     fun playTone() {
@@ -145,75 +228,5 @@ public class MeditationSessionActivity : AppCompatActivity() {
         soundPool.setOnLoadCompleteListener({ soundPool, sampleId, status ->
             soundPool.play(sampleId, 1.0f, 1.0f, 0, 0, 1.0f)
         })
-    }
-
-    inner class PreparationTimer(time: Long) {
-        val timer = object : CountDownTimer(time * DateUtils.SECOND_IN_MILLIS, DateUtils.SECOND_IN_MILLIS) {
-            override fun onTick(millisUntilFinished: Long) {
-                val s = millisUntilFinished.toInt() / 1000
-                val text = resources.getQuantityString(R.plurals.starting_session, s, s)
-                snackbar?.setText(text)
-            }
-
-            override fun onFinish() {
-                snackbar?.dismiss()
-                preparationTimer = null
-                seconds.visibility = android.view.View.VISIBLE
-
-                startTime = DateTime.now(TimeZone.getDefault())
-                meditationTimer = MeditationTimer(sessionLength)
-                meditationTimer?.start()
-            }
-        }
-
-        fun start() {
-            showStartingSnackBar()
-            timer.start()
-        }
-
-        fun cancel() = timer.cancel()
-    }
-
-    inner class MeditationTimer(time: Long) {
-        val timer = object : CountDownTimer(time * DateUtils.SECOND_IN_MILLIS, DateUtils.SECOND_IN_MILLIS) {
-            override fun onTick(millisUntilFinished: Long) {
-                val (h, m, s) = secondsToHMS(millisUntilFinished / 1000)
-                minutes.text = getString(R.string.x_min, 60 * h + m);
-                seconds.text = getString(R.string.x_s, s)
-            }
-
-            override fun onFinish() {
-                meditationTimer = null
-
-                fabStop.setImageResource(R.drawable.ic_check_white_24dp)
-                playTone()
-
-                AfterMeditationTimer(originalSessionLength).start()
-            }
-        }
-
-        init { playTone() }
-
-        fun start() = timer.start()
-        fun cancel() = timer.cancel()
-    }
-
-    inner class AfterMeditationTimer(var currentTime: Long) {
-        val timer = Timer()
-
-        val timerTask: TimerTask = object : TimerTask() {
-            override fun run() {
-                currentTime++
-                val (h, m, s) = secondsToHMS(currentTime)
-
-                runOnUiThread {
-                    minutes.text = getString(R.string.x_min, 60 * h + m);
-                    seconds.text = getString(R.string.x_s, s)
-                }
-            }
-        }
-
-
-        fun start() = timer.scheduleAtFixedRate(timerTask, 0, 1 * DateUtils.SECOND_IN_MILLIS)
     }
 }
