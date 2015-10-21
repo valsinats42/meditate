@@ -150,7 +150,7 @@ public class MeditationSessionActivity : AppCompatActivity() {
         bindViews()
         bindEvents()
 
-        if (meditationStartTime != null && preparationStartTime == null) {
+        if (meditationStartTime == null && preparationStartTime == null) {
             preparationStartTime = now()
         }
 
