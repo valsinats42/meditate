@@ -18,8 +18,7 @@ import java.util.*
 
 data class HMS(val h: Long, val m: Long, val s: Long)
 
-fun Long.toHMS() = secondsToHMS(this)
-
+fun secondsToHMS(seconds: Int) = secondsToHMS(seconds.toLong())
 fun secondsToHMS(seconds: Long): HMS {
     val h = seconds / 3600
     val m = (seconds / 60) % 60
@@ -54,8 +53,15 @@ fun getRuns(sessions: List<DateTime>): List<SessionRun> {
     return result
 }
 
-fun Date.toDateTime() = DateTime.forInstant(this.time, TimeZone.getDefault())
+val DAY_START_H = 4
+val DAY_START_M = 0
+
+fun now() = DateTime.now(TimeZone.getDefault())
+fun today() = DateTime.now(TimeZone.getDefault())
+fun DateTime.adjustMidnigth() = minus(0, 0, 0, DAY_START_H, DAY_START_M, 0, 0, DateTime.DayOverflow.Spillover)
 fun DateTime.toDate() = Date(getMilliseconds(TimeZone.getDefault()))
+fun Date.toDateTime() = DateTime.forInstant(this.time, TimeZone.getDefault())
+
 fun Fragment.graph() = (activity.application as MeditateApp).graph
 fun Activity.graph() = (application as MeditateApp).graph
 

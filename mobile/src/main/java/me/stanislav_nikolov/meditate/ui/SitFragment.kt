@@ -9,6 +9,7 @@ import android.support.v7.widget.CardView
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import me.stanislav_nikolov.meditate.BuildConfig
 import me.stanislav_nikolov.meditate.R
 import me.stanislav_nikolov.meditate.db.SessionDb
 import me.stanislav_nikolov.meditate.graph
@@ -25,7 +26,7 @@ import javax.inject.Inject
  */
 public class SitFragment : Fragment() {
 
-    var sessionLengthMinutes: Long = 0
+    var sessionLengthMinutes = 0
 
     // UI
     var buttonMinusTime: Button? = null
@@ -78,16 +79,12 @@ public class SitFragment : Fragment() {
         }
 
         fabStart!!.setOnClickListener {
-            val overrideLengths = false
-            var preparationLength: Long
-            var sessionLength: Long
+            var preparationLength = 15
+            var sessionLength = 60 * sessionLengthMinutes
 
-            if (!overrideLengths) {
-                preparationLength = 15L
-                sessionLength = sessionLengthMinutes * 60
-            } else {
-                preparationLength = 5L
-                sessionLength = 10L
+            if (BuildConfig.DEBUG) {
+                preparationLength = 5
+                sessionLength = 10
             }
 
             val activity = MeditationSessionActivity.newInstance(activity, sessionLength, preparationLength)

@@ -9,12 +9,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import hirondelle.date4j.DateTime
 import io.realm.RealmChangeListener
 import io.realm.RealmResults
 import me.leolin.shortcutbadger.ShortcutBadger
 import me.stanislav_nikolov.meditate.R
+import me.stanislav_nikolov.meditate.adjustMidnigth
 import me.stanislav_nikolov.meditate.db.*
 import me.stanislav_nikolov.meditate.getRuns
+import me.stanislav_nikolov.meditate.today
 import timber.log.Timber
 import java.util.*
 
@@ -49,9 +52,9 @@ public class StatsAdapter(val context: Context, val db: SessionDb): RecyclerView
     private fun calculateStats() {
         Timber.d("Recalculating stats...")
 
-        val runs = getRuns(data map { it.getAdjustedEndTime() })
+        val runs = getRuns(data map { it.getStartDateTime().adjustMidnigth() })
 
-        val currentRun = if (!data.isEmpty() && data[0].endsTodayAdjusted()) { runs[0].run } else { 0 }
+        val currentRun = if (!data.isEmpty() && data[0].getStartDateTime().isSameDayAs(today())) { runs[0].run } else { 0 }
 
         val bestRun = runs.map({ it.run }).max() ?: 0
 

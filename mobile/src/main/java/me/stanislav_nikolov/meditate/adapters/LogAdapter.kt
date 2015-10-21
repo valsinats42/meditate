@@ -13,11 +13,8 @@ import com.bignerdranch.android.multiselector.SwappingHolder
 import io.realm.Realm
 import io.realm.RealmChangeListener
 import io.realm.RealmResults
-import me.stanislav_nikolov.meditate.BuildConfig
-import me.stanislav_nikolov.meditate.R
+import me.stanislav_nikolov.meditate.*
 import me.stanislav_nikolov.meditate.db.*
-import me.stanislav_nikolov.meditate.getRuns
-import me.stanislav_nikolov.meditate.toHMS
 import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
@@ -48,7 +45,7 @@ public class LogAdapter(val context: Context, val db: SessionDb): RecyclerView.A
     }
 
     private fun updateRuns() {
-        runs = getRuns(data map { it.getAdjustedEndTime() })
+        runs = getRuns(data map { it.startTime!!.toDateTime().adjustMidnigth() })
                 .flatMap {
                     when (it.numEntries) {
                         0 -> emptyList<ListPosition>()
@@ -136,24 +133,25 @@ public class LogAdapter(val context: Context, val db: SessionDb): RecyclerView.A
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val session = data[position]
+        val sessionStart = session.getStartDateTime()
 
         val df = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault())
 
-        var endDate = when {
-            session.endsTodayAdjusted() -> context.getString(R.string.today)
-            session.endsYesterdayAdjusted() -> context.getString(R.string.yesterday)
+        var startDateString = when {
+            sessionStart.adjustMidnigth().isSameDayAs(today().adjustMidnigth()) -> context.getString(R.string.today)
+            sessionStart.adjustMidnigth().isSameDayAs(today().minusDays(1).adjustMidnigth()) -> context.getString(R.string.yesterday)
             else -> df.format(session.endTime)
         }
-        if (!session.getAdjustedEndTime().isSameDayAs(session.getEndDateTime())) {
-            endDate += " (+1)"
+        if (!sessionStart.isSameDayAs(sessionStart.adjustMidnigth())) {
+            startDateString += " (+)"
         }
 
         var startTime = session.getStartDateTime().format("hh:mm")
         var endTime = session.getEndDateTime().format("hh:mm")
 
-        val (h, m) = session.getDuration().toHMS()
+        val (h, m) = secondsToHMS(session.getDuration())
         val duration = when {
-            h > 0   -> context.getString(R.string.x_h_y_min)
+            h > 0   -> context.getString(R.string.x_h_y_min, h, m)
             else    -> context.getString(R.string.x_min, m)
         }
 
@@ -164,7 +162,7 @@ public class LogAdapter(val context: Context, val db: SessionDb): RecyclerView.A
             ListPosition.LAST -> R.drawable.run_indicator_bottom
         }
 
-        holder.title.text = endDate
+        holder.title.text = startDateString
         holder.subtitle.text = "$duration ($startTime\u2013$endTime)"
         holder.run.setImageResource(runIndicator)
     }

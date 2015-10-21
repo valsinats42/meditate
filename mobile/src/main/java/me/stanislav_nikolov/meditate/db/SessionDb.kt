@@ -3,6 +3,7 @@ package me.stanislav_nikolov.meditate.db
 import hirondelle.date4j.DateTime
 import io.realm.Realm
 import io.realm.RealmChangeListener
+import me.stanislav_nikolov.meditate.now
 import me.stanislav_nikolov.meditate.toDate
 import timber.log.Timber
 import javax.inject.Inject
@@ -47,7 +48,7 @@ class SessionDb @Singleton @Inject constructor(val realm: Realm) {
                 DateTime("2010-01-20 23:59:59"),
                 DateTime("2010-01-21 23:59:59"),
                 DateTime("2010-01-23 23:59:59"),
-                DateTime.now(java.util.TimeZone.getDefault())
+                now()
         )
 
         realm.beginTransaction()
