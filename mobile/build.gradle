@@ -11,8 +11,8 @@ android {
         applicationId "me.stanislav_nikolov.meditate"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 2
-        versionName "1.0.1"
+        versionCode 3
+        versionName "1.0.2"
     }
     buildTypes {
         release {
@@ -29,17 +29,17 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     // wearApp project(':wear')
 
-    compile 'com.android.support:appcompat-v7:23.0.1'
-    compile 'com.android.support:design:23.0.1'
-    compile 'com.android.support:cardview-v7:23.0.1'
-    compile 'com.android.support:recyclerview-v7:23.0.1'
+    compile 'com.android.support:appcompat-v7:23.1.0'
+    compile 'com.android.support:design:23.1.0'
+    compile 'com.android.support:cardview-v7:23.1.0'
+    compile 'com.android.support:recyclerview-v7:23.1.0'
 
     // Kotlin
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     // Realm
-    compile 'io.realm:realm-android:0.82.2'
-    kapt 'io.realm:realm-android:0.82.2'
+    compile 'io.realm:realm-android:0.83.1'
+    kapt 'io.realm:realm-android:0.83.1'
 
     // ShortcutBadger
     compile 'me.leolin:ShortcutBadger:1.1.3@aar'
@@ -57,13 +57,15 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.0.1'
     compile 'com.google.dagger:dagger:2.0.1'
     provided 'javax.annotation:jsr250-api:1.0'
+
+    // Crashlytics
     compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
         transitive = true;
     }
 }
 
 buildscript {
-    ext.kotlin_version = '0.14.451'
+    ext.kotlin_version = '1.0.0-beta-1038'
     repositories {
         mavenCentral()
         jcenter()

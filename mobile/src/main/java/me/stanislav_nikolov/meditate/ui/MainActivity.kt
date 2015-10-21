@@ -8,10 +8,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.Toolbar
-import hirondelle.date4j.DateTime
 import me.stanislav_nikolov.meditate.R
-import me.stanislav_nikolov.meditate.db.DbMeditationSession
-import me.stanislav_nikolov.meditate.toDate
 
 public class MainActivity : android.support.v7.app.AppCompatActivity() {
 
@@ -30,7 +27,6 @@ public class MainActivity : android.support.v7.app.AppCompatActivity() {
 
         setSupportActionBar(toolbar)
         setupTabs()
-//        loadDb()
     }
 
     fun setupTabs() {
@@ -42,26 +38,6 @@ public class MainActivity : android.support.v7.app.AppCompatActivity() {
 
         viewPager.adapter = ViewPagerAdapter(supportFragmentManager, fragments)
         tabLayout.setupWithViewPager(viewPager);
-    }
-
-    private fun loadDb() {
-        var dates = arrayOf(
-                DateTime("2010-01-19 23:59:59"),
-                DateTime("2010-01-20 23:59:59"),
-                DateTime("2010-01-21 23:59:59"),
-                DateTime("2010-01-23 23:59:59"),
-                DateTime.now(java.util.TimeZone.getDefault())
-        )
-
-        val realm = io.realm.Realm.getInstance(application)
-        realm.beginTransaction()
-        dates.forEach {
-            val m = realm.createObject(DbMeditationSession::class.java)
-            m.uuid = java.util.UUID.randomUUID().toString()
-            m.startTime = it.minus(0, 0, 0, 0, 30, 0, 0, DateTime.DayOverflow.Spillover).toDate()
-            m.endTime = it.toDate()
-        }
-        realm.commitTransaction()
     }
 
     override fun onCreateOptionsMenu(menu: android.view.Menu): Boolean {

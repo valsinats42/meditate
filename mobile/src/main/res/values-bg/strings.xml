@@ -4,7 +4,7 @@
     <string name="abort">Прекъсни</string>
     <string name="abort_incomplete_session">Прекъсни недовършена сесия?</string>
     <string name="action_settings">Настойки</string>
-    <string name="average_session_length">Средна продължителност на сесията</string>
+    <string name="average_session_length">Средна продължителност на завършена сесия</string>
     <string name="best_run_streak">Най-много последователни дни</string>
     <string name="current_run_streak">Текущи последователни дни</string>
     <string name="delete">Изтрий</string>
@@ -14,7 +14,6 @@
     <string name="plus_x_min">+%d мин</string>
     <string name="session_log">Списък със сесии</string>
     <string name="statistics">Статистика</string>
-    <string name="starting_session">Започване на сесията след %1$d секунди…</string>
     <string name="title_activity_meditation_session">Медитационна сесия</string>
     <string name="today">днес</string>
     <string name="total_meditation_time">Общо време на медитация</string>
@@ -34,4 +33,10 @@
         <item quantity="one">%d избрана сесия</item>
         <item quantity="other">%d избрани сесии</item>
     </plurals>
+    <plurals name="starting_session">
+        <item quantity="one">Започване на сесията след %1$d секунда…</item>
+        <item quantity="other">Започване на сесията след %1$d секунди…</item>
+    </plurals>
+    <string name="excluding_today">без днес</string>
+    <string name="including_today">днес вкл.</string>
 </resources>

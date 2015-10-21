@@ -11,12 +11,10 @@ import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback
 import com.bignerdranch.android.multiselector.MultiSelector
 import com.bignerdranch.android.multiselector.SwappingHolder
 import io.realm.Realm
+import io.realm.RealmChangeListener
 import io.realm.RealmResults
-import me.stanislav_nikolov.meditate.BuildConfig
-import me.stanislav_nikolov.meditate.R
+import me.stanislav_nikolov.meditate.*
 import me.stanislav_nikolov.meditate.db.*
-import me.stanislav_nikolov.meditate.getRuns
-import me.stanislav_nikolov.meditate.toHMS
 import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
@@ -25,19 +23,29 @@ import java.util.*
  * Created by stanley on 05.09.15.
  */
 
-public class LogAdapter(val context: Context, val realm: Realm, val data: RealmResults<DbMeditationSession>): RecyclerView.Adapter<LogAdapter.ViewHolder>() {
+public class LogAdapter(val context: Context, val db: SessionDb): RecyclerView.Adapter<LogAdapter.ViewHolder>() {
 
     enum class ListPosition { ALONE, FIRST, MIDDLE, LAST }
 
+    private val data: RealmResults<DbMeditationSession>
     private var runs: List<ListPosition> = emptyList()
 
-    private val changeListener = {
+    private val changeListener = object : RealmChangeListener {
+        override fun onChange() {
+            updateRuns()
+            notifyDataSetChanged()
+        }
+    }
+
+    init {
+        data = db.allSessions
+        db.addChangeListener(changeListener)
+
         updateRuns()
-        notifyDataSetChanged()
     }
 
     private fun updateRuns() {
-        runs = getRuns(data map { it.getAdjustedEndTime() })
+        runs = getRuns(data map { it.startTime!!.toDateTime().adjustMidnigth() })
                 .flatMap {
                     when (it.numEntries) {
                         0 -> emptyList<ListPosition>()
@@ -47,12 +55,6 @@ public class LogAdapter(val context: Context, val realm: Realm, val data: RealmR
                 }
 
         Timber.d("Updated runs: data size: %d, runs size: %d", data.size(), runs.size())
-    }
-
-    init {
-        realm.addChangeListener(changeListener)
-
-        updateRuns()
     }
 
     val multiSelector = MultiSelector()
@@ -68,20 +70,9 @@ public class LogAdapter(val context: Context, val realm: Realm, val data: RealmR
         }
 
         override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-            realm.beginTransaction()
-
             val selectedSessionuuids = multiSelector.selectedPositions.map { data[it].uuid }
-            // TODO fix this when there's a sane way to remove multiple results
-            for (s in selectedSessionuuids) {
-                for (i in 0 .. data.lastIndex) {
-                    if (data[i].uuid == s) {
-                        data.remove(i)
-                        break
-                    }
-                }
-            }
 
-            realm.commitTransaction()
+            db.deleteSessions(selectedSessionuuids)
 
             notifyDataSetChanged()
 
@@ -142,24 +133,25 @@ public class LogAdapter(val context: Context, val realm: Realm, val data: RealmR
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val session = data[position]
+        val sessionStart = session.getStartDateTime()
 
         val df = DateFormat.getDateInstance(DateFormat.LONG, Locale.getDefault())
 
-        var endDate = when {
-            session.endsTodayAdjusted() -> context.getString(R.string.today)
-            session.endsYesterdayAdjusted() -> context.getString(R.string.yesterday)
+        var startDateString = when {
+            sessionStart.adjustMidnigth().isSameDayAs(today().adjustMidnigth()) -> context.getString(R.string.today)
+            sessionStart.adjustMidnigth().isSameDayAs(today().minusDays(1).adjustMidnigth()) -> context.getString(R.string.yesterday)
             else -> df.format(session.endTime)
         }
-        if (!session.getAdjustedEndTime().isSameDayAs(session.getEndDateTime())) {
-            endDate += " (+1)"
+        if (!sessionStart.isSameDayAs(sessionStart.adjustMidnigth())) {
+            startDateString += " (+)"
         }
 
         var startTime = session.getStartDateTime().format("hh:mm")
         var endTime = session.getEndDateTime().format("hh:mm")
 
-        val (h, m) = session.getDuration().toHMS()
+        val (h, m) = secondsToHMS(session.getDuration())
         val duration = when {
-            h > 0   -> context.getString(R.string.x_h_y_min)
+            h > 0   -> context.getString(R.string.x_h_y_min, h, m)
             else    -> context.getString(R.string.x_min, m)
         }
 
@@ -170,7 +162,7 @@ public class LogAdapter(val context: Context, val realm: Realm, val data: RealmR
             ListPosition.LAST -> R.drawable.run_indicator_bottom
         }
 
-        holder.title.text = endDate
+        holder.title.text = startDateString
         holder.subtitle.text = "$duration ($startTime\u2013$endTime)"
         holder.run.setImageResource(runIndicator)
     }

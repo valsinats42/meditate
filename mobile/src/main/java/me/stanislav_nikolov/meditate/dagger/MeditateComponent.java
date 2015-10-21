@@ -17,7 +17,10 @@ import me.stanislav_nikolov.meditate.ui.StatsFragment;
  */
 @Singleton
 @Component(
-        modules = MeditateAppModule.class
+        modules = {
+                MeditateAppModule.class,
+                OnDiskRealmModule.class,
+        }
 )
 public interface MeditateComponent {
     void inject(SitFragment fragment);
