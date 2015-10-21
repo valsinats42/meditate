@@ -4,7 +4,7 @@
     <string name="abort">Прекъсни</string>
     <string name="abort_incomplete_session">Прекъсни недовършена сесия?</string>
     <string name="action_settings">Настойки</string>
-    <string name="average_session_length">Средна продължителност на сесията</string>
+    <string name="average_session_length">Средна продължителност на завършена сесия</string>
     <string name="best_run_streak">Най-много последователни дни</string>
     <string name="current_run_streak">Текущи последователни дни</string>
     <string name="delete">Изтрий</string>

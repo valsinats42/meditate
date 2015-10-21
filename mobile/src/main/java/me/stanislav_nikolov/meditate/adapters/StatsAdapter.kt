@@ -58,13 +58,18 @@ public class StatsAdapter(val context: Context, val db: SessionDb): RecyclerView
 
         val bestRun = runs.map({ it.run }).max() ?: 0
 
-        val durationsSeconds = data map { it.getDuration() }
-        val totalTimeMeditatingMinutes = durationsSeconds.sum().toInt() / 60
-        val avgSessionDuration = durationsSeconds.average().toInt() / 60
+        val totalTimeMeditatingMinutes = data
+            .map { it.getDuration() }
+                .sum().toInt() / 60
+        val avgSessionDuration = data
+                .filter { it.getDuration() >= it.initialDurationSeconds }
+                .map { it.getDuration() }
+                .average().toInt() / 60
 
-        fun qm(q: Int) = context.resources.getQuantityString(R.plurals.minutes, q, q)
-        fun qd(q: Int) = context.resources.getQuantityString(R.plurals.days, q, q)
-        fun s(id: Int) = context.resources.getString(id)
+        val res = context.resources
+        fun qm(q: Int) = res.getQuantityString(R.plurals.minutes, q, q)
+        fun qd(q: Int) = res.getQuantityString(R.plurals.days, q, q)
+        fun s(id: Int) = res.getString(id)
 
         stats.clear()
         stats.addAll(listOf(

@@ -24,7 +24,7 @@
     <string name="current_run_streak">Current Run Streak</string>
     <string name="best_run_streak">Best Run Streak</string>
     <string name="number_of_sessions">Number of Sessions</string>
-    <string name="average_session_length">Average Session Length</string>
+    <string name="average_session_length">Average Completed Session Length</string>
     <string name="total_meditation_time">Total Meditation Time</string>
 
     <plurals name="minutes">
