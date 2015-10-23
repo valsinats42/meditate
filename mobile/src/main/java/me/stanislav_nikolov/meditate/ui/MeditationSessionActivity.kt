@@ -154,6 +154,10 @@ public class MeditationSessionActivity : AppCompatActivity() {
             preparationStartTime = now()
         }
 
+        if (meditationStartTime == null) {
+            setTimerText(SESSION_LENGTH)
+        }
+
         handler!!.postDelayed(updateUiRunnable, 200)
     }
 
