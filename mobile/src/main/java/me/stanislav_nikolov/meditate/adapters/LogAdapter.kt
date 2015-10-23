@@ -10,7 +10,6 @@ import android.widget.TextView
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback
 import com.bignerdranch.android.multiselector.MultiSelector
 import com.bignerdranch.android.multiselector.SwappingHolder
-import io.realm.Realm
 import io.realm.RealmChangeListener
 import io.realm.RealmResults
 import me.stanislav_nikolov.meditate.*
@@ -45,7 +44,7 @@ public class LogAdapter(val context: Context, val db: SessionDb): RecyclerView.A
     }
 
     private fun updateRuns() {
-        runs = getRuns(data map { it.startTime!!.toDateTime().adjustMidnigth() })
+        runs = getRuns(data.map { it.startTime!!.toDateTime().adjustMidnigth() })
                 .flatMap {
                     when (it.numEntries) {
                         0 -> emptyList<ListPosition>()
@@ -54,7 +53,7 @@ public class LogAdapter(val context: Context, val db: SessionDb): RecyclerView.A
                     }
                 }
 
-        Timber.d("Updated runs: data size: %d, runs size: %d", data.size(), runs.size())
+        Timber.d("Updated runs: data size: %d, runs size: %d", data.size, runs.size)
     }
 
     val multiSelector = MultiSelector()
@@ -85,7 +84,7 @@ public class LogAdapter(val context: Context, val db: SessionDb): RecyclerView.A
     }
 
     fun updateTitle() {
-        val n = multiSelector.selectedPositions.size()
+        val n = multiSelector.selectedPositions.size
         actionMode?.title = context.resources.getQuantityString(R.plurals.sessions_selected, n, n)
     }
 
@@ -105,7 +104,7 @@ public class LogAdapter(val context: Context, val db: SessionDb): RecyclerView.A
 
             v.setOnClickListener {
                 if (multiSelector.tapSelection(this)) {
-                    if (multiSelector.selectedPositions.size() == 0) {
+                    if (multiSelector.selectedPositions.size == 0) {
                         actionMode?.finish()
                         actionMode = null
                     } else {
@@ -167,5 +166,5 @@ public class LogAdapter(val context: Context, val db: SessionDb): RecyclerView.A
         holder.run.setImageResource(runIndicator)
     }
 
-    override fun getItemCount() = data.size()
+    override fun getItemCount() = data.size
 }

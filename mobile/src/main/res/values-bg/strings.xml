@@ -39,4 +39,5 @@
     </plurals>
     <string name="excluding_today">без днес</string>
     <string name="including_today">днес вкл.</string>
+    <string name="run_streak_indicator">Индикатор на последователни дни</string>
 </resources>
