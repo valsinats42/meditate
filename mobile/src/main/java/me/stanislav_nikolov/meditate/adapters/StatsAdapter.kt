@@ -52,7 +52,7 @@ public class StatsAdapter(val context: Context, val db: SessionDb): RecyclerView
     private fun calculateStats() {
         Timber.d("Recalculating stats...")
 
-        val runs = getRuns(data map { it.getStartDateTime().adjustMidnigth() })
+        val runs = getRuns(data.map { it.getStartDateTime().adjustMidnigth() })
 
         fun DateTime.isAdjustedToday() = adjustMidnigth().isSameDayAs(today().adjustMidnigth())
         fun DateTime.isAdjustedYesterday() = adjustMidnigth().isSameDayAs(today().minusDays(1).adjustMidnigth())
@@ -71,12 +71,14 @@ public class StatsAdapter(val context: Context, val db: SessionDb): RecyclerView
         val bestRun = runs.map({ it.run }).max() ?: 0
 
         val totalTimeMeditatingMinutes = data
-            .map { it.getDuration() }
-                .sum().toInt() / 60
+                .map { it.getDuration() }
+                .sum()
+                .toInt() / 60
         val avgSessionDuration = data
                 .filter { it.getDuration() >= it.initialDurationSeconds }
                 .map { it.getDuration() }
-                .average().toInt() / 60
+                .average()
+                .toInt() / 60
 
         val res = context.resources
         fun qm(q: Int) = res.getQuantityString(R.plurals.minutes, q, q)
@@ -93,7 +95,7 @@ public class StatsAdapter(val context: Context, val db: SessionDb): RecyclerView
         stats.addAll(listOf(
                 StatsAdapter.MeditationStat(s(R.string.current_run_streak), qd(currentRun) + inclusionSuffix),
                 StatsAdapter.MeditationStat(s(R.string.best_run_streak), qd(bestRun)),
-                StatsAdapter.MeditationStat(s(R.string.number_of_sessions), data.size().toString()),
+                StatsAdapter.MeditationStat(s(R.string.number_of_sessions), data.size.toString()),
                 StatsAdapter.MeditationStat(s(R.string.average_session_length), qm(avgSessionDuration)),
                 StatsAdapter.MeditationStat(s(R.string.total_meditation_time), qm(totalTimeMeditatingMinutes))
         ))
@@ -123,5 +125,5 @@ public class StatsAdapter(val context: Context, val db: SessionDb): RecyclerView
         holder.subtitle.text = stat.value
     }
 
-    override fun getItemCount() = stats.size()
+    override fun getItemCount() = stats.size
 }

@@ -33,7 +33,7 @@ class SessionDb @Singleton @Inject constructor(val realm: Realm) {
         for (s in selectedSessionuuids) {
             for (i in 0 .. allSessions.lastIndex) {
                 if (allSessions[i].uuid == s) {
-                    allSessions.remove(i)
+                    allSessions.removeAt(i)
                     break
                 }
             }

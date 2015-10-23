@@ -30,7 +30,7 @@ fun secondsToHMS(seconds: Long): HMS {
 data class SessionRun(val numEntries: Int, val run: Int)
 
 fun getRuns(sessions: List<DateTime>): List<SessionRun> {
-    val endDays = sessions map { it.modifiedJulianDayNumber }
+    val endDays = sessions.map { it.modifiedJulianDayNumber }
 
     if (sessions.count() == 0) return emptyList()
 
@@ -47,7 +47,7 @@ fun getRuns(sessions: List<DateTime>): List<SessionRun> {
         }
     }
 
-    val i = endDays.size()
+    val i = endDays.size
     result.add(SessionRun(currentSessionCount, 1 + Math.abs(endDays[i-1] - endDays[i - currentSessionCount])))
 
     return result

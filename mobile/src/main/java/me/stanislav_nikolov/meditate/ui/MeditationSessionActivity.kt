@@ -9,12 +9,9 @@ import android.os.Handler
 import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
-import android.support.v4.view.ViewPropertyAnimatorCompat
 import android.support.v7.app.AppCompatActivity
 import android.text.format.DateUtils
 import android.view.View
-import android.view.animation.AlphaAnimation
-import android.view.animation.Animation
 import android.widget.TextView
 import hirondelle.date4j.DateTime
 import me.stanislav_nikolov.meditate.*

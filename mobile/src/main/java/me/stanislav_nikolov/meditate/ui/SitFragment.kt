@@ -14,7 +14,6 @@ import me.stanislav_nikolov.meditate.R
 import me.stanislav_nikolov.meditate.db.SessionDb
 import me.stanislav_nikolov.meditate.db.getDuration
 import me.stanislav_nikolov.meditate.graph
-import timber.log.Timber
 import javax.inject.Inject
 
 /**

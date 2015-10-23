@@ -48,7 +48,7 @@ public class MainActivity : android.support.v7.app.AppCompatActivity() {
     class ViewPagerAdapter(fragmentManager: FragmentManager, val fragments: List<ViewPagerAdapter.F>) : FragmentPagerAdapter(fragmentManager) {
         data class F(val fragment: Fragment, val title: String)
 
-        override fun getCount() = fragments.size()
+        override fun getCount() = fragments.size
 
         override fun getItem(position: Int) = fragments[position].fragment
 

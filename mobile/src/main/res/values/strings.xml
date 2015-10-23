@@ -28,6 +28,7 @@
     <string name="total_meditation_time">Total Meditation Time</string>
     <string name="including_today">incl. today</string>
     <string name="excluding_today">excl. today</string>
+    <string name="run_streak_indicator">Run Streak Indicator</string>
 
     <plurals name="minutes">
         <item quantity="one">%d minute</item>
