@@ -10,6 +10,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name" >
@@ -19,12 +20,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.MeditationSessionActivity"
+            android:parentActivityName=".ui.MainActivity"
+            android:launchMode="singleTop"
             android:label="@string/title_activity_meditation_session" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.MainActivity"/>
         </activity>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="f2357a1a9fb92617d299c3de47a4186711ea385e" />
+
+        <receiver android:name=".ui.MeditationSessionActivity$AlarmReceiver">
+        </receiver>
     </application>
 </manifest>

@@ -3,6 +3,7 @@ package me.stanislav_nikolov.meditate
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.media.SoundPool
 import android.support.v4.app.Fragment
 import hirondelle.date4j.DateTime
 import me.stanislav_nikolov.meditate.db.SessionDb
@@ -63,7 +64,7 @@ fun DateTime.toDate() = Date(getMilliseconds(TimeZone.getDefault()))
 fun Date.toDateTime() = DateTime.forInstant(this.time, TimeZone.getDefault())
 
 fun Fragment.graph() = (activity.application as MeditateApp).graph
-fun Activity.graph() = (application as MeditateApp).graph
+fun Context.graph() = (applicationContext as MeditateApp).graph
 
 fun exportData(context: Context, db: SessionDb) {
     val dateFormat = "YYYY-MM-DD hh:mm:ss"
@@ -89,4 +90,3 @@ fun exportData(context: Context, db: SessionDb) {
     sendIntent.setType("application/json")
     context.startActivity(sendIntent)
 }
-

@@ -1,7 +1,9 @@
 package me.stanislav_nikolov.meditate.dagger;
 
+import android.app.AlarmManager;
 import android.app.Application;
-import android.media.SoundPool;
+import android.app.NotificationManager;
+import android.media.MediaPlayer;
 
 import javax.inject.Singleton;
 
@@ -30,5 +32,7 @@ public interface MeditateComponent {
 
     Application application();
     Realm realm();
-    SoundPool soundPool();
+    MediaPlayer mediaPlayer();
+    NotificationManager notificationManager();
+    AlarmManager alarmManager();
 }
