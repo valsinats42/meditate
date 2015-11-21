@@ -6,13 +6,6 @@
     tools:context="me.stanislav_nikolov.meditate.SitFragment"
     android:background="@color/primary_light">
 
-    <ImageView
-        android:src="@drawable/background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:visibility="gone" />
-
     <android.support.design.widget.FloatingActionButton
         app:fabSize="normal"
         android:transitionName="@string/fabTransition"

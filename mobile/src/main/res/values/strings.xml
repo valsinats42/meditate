@@ -29,6 +29,7 @@
     <string name="including_today">incl. today</string>
     <string name="excluding_today">excl. today</string>
     <string name="run_streak_indicator">Run Streak Indicator</string>
+    <string name="meditation_session_in_progress">Meditation session in progress</string>
 
     <plurals name="minutes">
         <item quantity="one">%d minute</item>
