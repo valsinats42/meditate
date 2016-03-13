@@ -24,7 +24,7 @@ import javax.inject.Inject
  * Use the [SitFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-public class SitFragment : Fragment() {
+class SitFragment : Fragment() {
 
     var sessionLengthMinutes = 0
 
@@ -38,7 +38,7 @@ public class SitFragment : Fragment() {
     @Inject lateinit var db: SessionDb
 
     companion object {
-        public fun newInstance(): SitFragment = SitFragment()
+        fun newInstance(): SitFragment = SitFragment()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

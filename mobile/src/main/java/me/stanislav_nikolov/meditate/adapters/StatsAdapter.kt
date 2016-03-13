@@ -15,7 +15,10 @@ import io.realm.RealmResults
 import me.leolin.shortcutbadger.ShortcutBadger
 import me.stanislav_nikolov.meditate.R
 import me.stanislav_nikolov.meditate.adjustMidnigth
-import me.stanislav_nikolov.meditate.db.*
+import me.stanislav_nikolov.meditate.db.DbMeditationSession
+import me.stanislav_nikolov.meditate.db.SessionDb
+import me.stanislav_nikolov.meditate.db.getDuration
+import me.stanislav_nikolov.meditate.db.getStartDateTime
 import me.stanislav_nikolov.meditate.getRuns
 import me.stanislav_nikolov.meditate.today
 import timber.log.Timber
@@ -100,7 +103,8 @@ public class StatsAdapter(val context: Context, val db: SessionDb): RecyclerView
                 StatsAdapter.MeditationStat(s(R.string.total_meditation_time), qm(totalTimeMeditatingMinutes))
         ))
 
-        ShortcutBadger.setBadge(context, currentRun)
+        ShortcutBadger.applyCount(context, currentRun)
+
     }
 
     public class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {

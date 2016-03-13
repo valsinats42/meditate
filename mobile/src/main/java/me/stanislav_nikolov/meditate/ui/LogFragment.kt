@@ -13,14 +13,14 @@ import me.stanislav_nikolov.meditate.db.SessionDb
 import me.stanislav_nikolov.meditate.graph
 import javax.inject.Inject
 
-public class LogFragment : Fragment() {
+class LogFragment : Fragment() {
     var recyclerView: RecyclerView? = null
 
     @Inject lateinit var db: SessionDb
     lateinit var adapter: LogAdapter
 
     companion object {
-        public fun newInstance(): LogFragment = LogFragment()
+        fun newInstance(): LogFragment = LogFragment()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +38,7 @@ public class LogFragment : Fragment() {
         with(recyclerView!!) {
             layoutManager = LinearLayoutManager(activity)
             setHasFixedSize(true)
-            setAdapter(adapter)
+            adapter = this@LogFragment.adapter
         }
 
         return view

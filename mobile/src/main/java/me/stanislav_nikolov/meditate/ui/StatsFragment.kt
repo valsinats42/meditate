@@ -39,7 +39,7 @@ public class StatsFragment : Fragment() {
         with(recyclerView!!) {
             layoutManager = LinearLayoutManager(activity)
             setHasFixedSize(true)
-            setAdapter(adapter)
+            adapter = this@StatsFragment.adapter
         }
 
         return view

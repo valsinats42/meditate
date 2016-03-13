@@ -1,6 +1,9 @@
 package me.stanislav_nikolov.meditate.ui
 
-import android.app.*
+import android.app.Activity
+import android.app.AlarmManager
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -24,7 +27,7 @@ import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
-public class MeditationSessionActivity : AppCompatActivity() {
+class MeditationSessionActivity : AppCompatActivity() {
     var PREPARATION_TIME = 0
     var SESSION_LENGTH = 0
 
@@ -74,51 +77,55 @@ public class MeditationSessionActivity : AppCompatActivity() {
         startingSnackBar?.setText(text)
     }
 
-    val updateUiRunnable: () -> Unit = {
-        // Reschedule every second
-        handler?.postDelayed(updateUiRunnable, 1 * DateUtils.SECOND_IN_MILLIS)
-        Timber.d("Updating UI!")
+    var updateUiRunnable: Runnable? = null
 
-        val preparationTime = preparationStartTime?.numSecondsFrom(now())?.toInt()
-        val meditationTime = meditationStartTime?.numSecondsFrom(now())?.toInt()
+    fun setupUpdateUiRunnable() {
+        updateUiRunnable = Runnable {
+            // Reschedule every second
+            handler?.postDelayed(updateUiRunnable, 1 * DateUtils.SECOND_IN_MILLIS)
+            Timber.d("Updating UI!")
 
-        when {
-            preparationTime != null && preparationTime < PREPARATION_TIME -> {
-                if (startingSnackBar == null) {
-                    startingSnackBar = Snackbar.make(layout, "", Snackbar.LENGTH_INDEFINITE)
-                    startingSnackBar!!.show()
-                }
+            val preparationTime = preparationStartTime?.numSecondsFrom(now())?.toInt()
+            val meditationTime = meditationStartTime?.numSecondsFrom(now())?.toInt()
 
-                setStartingSnackBarText(PREPARATION_TIME - preparationTime)
-            }
-
-            preparationTime != null && preparationTime >= PREPARATION_TIME -> {
-                startingSnackBar?.dismiss()
-
-                preparationStartTime = null
-
-                mediaPlayer.start()
-
-                meditationStartTime = now()
-
-                setupTimer()
-            }
-
-            meditationTime != null -> {
-                fabStop.visibility = View.VISIBLE
-                seconds.visibility = View.VISIBLE
-
-                when {
-                    meditationTime < SESSION_LENGTH -> {
-                        setTimerText(SESSION_LENGTH - meditationTime)
+            when {
+                preparationTime != null && preparationTime < PREPARATION_TIME -> {
+                    if (startingSnackBar == null) {
+                        startingSnackBar = Snackbar.make(layout, "", Snackbar.LENGTH_INDEFINITE)
+                        startingSnackBar!!.show()
                     }
 
-                    meditationTime >= SESSION_LENGTH -> {
-                        fabStop.setImageResource(R.drawable.ic_check_white_24dp)
-                        setTimerText(meditationTime)
-                    }
+                    setStartingSnackBarText(PREPARATION_TIME - preparationTime)
                 }
 
+                preparationTime != null && preparationTime >= PREPARATION_TIME -> {
+                    startingSnackBar?.dismiss()
+
+                    preparationStartTime = null
+
+                    mediaPlayer.start()
+
+                    meditationStartTime = now()
+
+                    setupTimer()
+                }
+
+                meditationTime != null -> {
+                    fabStop.visibility = View.VISIBLE
+                    seconds.visibility = View.VISIBLE
+
+                    when {
+                        meditationTime < SESSION_LENGTH -> {
+                            setTimerText(SESSION_LENGTH - meditationTime)
+                        }
+
+                        meditationTime >= SESSION_LENGTH -> {
+                            fabStop.setImageResource(R.drawable.ic_check_white_24dp)
+                            setTimerText(meditationTime)
+                        }
+                    }
+
+                }
             }
         }
     }
@@ -197,6 +204,8 @@ public class MeditationSessionActivity : AppCompatActivity() {
         bindEvents()
 
         buildNotification()
+
+        setupUpdateUiRunnable()
 
         if (meditationStartTime == null) {
             setTimerText(SESSION_LENGTH)

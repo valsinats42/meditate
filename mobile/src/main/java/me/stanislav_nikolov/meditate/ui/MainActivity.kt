@@ -10,7 +10,7 @@ import android.support.v4.view.ViewPager
 import android.support.v7.widget.Toolbar
 import me.stanislav_nikolov.meditate.R
 
-public class MainActivity : android.support.v7.app.AppCompatActivity() {
+class MainActivity : android.support.v7.app.AppCompatActivity() {
 
     lateinit var toolbar: Toolbar
     lateinit var viewPager: ViewPager
