@@ -10,13 +10,13 @@ import java.util.*
  * Created by stanley on 12.09.15.
  */
 @RealmClass
-public open class DbMeditationSession : RealmObject() {
+open class DbMeditationSession : RealmObject() {
     @PrimaryKey
-    public open var uuid: String? = null
-    public open var startTime: Date? = null
-    public open var endTime: Date? = null
-    public open var initialDurationSeconds: Int = 0
-    public open var comment: String? = null
+    open var uuid: String? = null
+    open var startTime: Date? = null
+    open var endTime: Date? = null
+    open var initialDurationSeconds: Int = 0
+    open var comment: String? = null
 }
 
 fun DbMeditationSession.getStartDateTime() = startTime!!.toDateTime()

@@ -1,9 +1,7 @@
 package me.stanislav_nikolov.meditate
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.media.SoundPool
 import android.support.v4.app.Fragment
 import hirondelle.date4j.DateTime
 import me.stanislav_nikolov.meditate.db.SessionDb
@@ -85,8 +83,8 @@ fun exportData(context: Context, db: SessionDb) {
     val sharedData = root.toString()
 
     val sendIntent = Intent()
-    sendIntent.setAction(Intent.ACTION_SEND)
+    sendIntent.action = Intent.ACTION_SEND
     sendIntent.putExtra(Intent.EXTRA_TEXT, sharedData)
-    sendIntent.setType("application/json")
+    sendIntent.type = "application/json"
     context.startActivity(sendIntent)
 }

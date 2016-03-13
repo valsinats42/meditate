@@ -14,11 +14,11 @@ import javax.inject.Singleton
  */
 
 class SessionDb @Singleton @Inject constructor(val realm: Realm) {
-    public val allSessions = realm.allObjectsSorted(DbMeditationSession::class.java, "endTime", false)
+    val allSessions = realm.allObjectsSorted(DbMeditationSession::class.java, "endTime", false)
 
-    public fun addChangeListener(changeListener: RealmChangeListener) = realm.addChangeListener(changeListener)
+    fun addChangeListener(changeListener: RealmChangeListener) = realm.addChangeListener(changeListener)
 
-    public fun saveSession(session: DbMeditationSession) {
+    fun saveSession(session: DbMeditationSession) {
         realm.beginTransaction()
         realm.copyToRealm(session)
         realm.commitTransaction()

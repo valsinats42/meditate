@@ -13,7 +13,7 @@ import me.stanislav_nikolov.meditate.db.SessionDb
 import me.stanislav_nikolov.meditate.graph
 import javax.inject.Inject
 
-public class StatsFragment : Fragment() {
+class StatsFragment : Fragment() {
 
     @Inject lateinit var db: SessionDb
 
@@ -21,7 +21,7 @@ public class StatsFragment : Fragment() {
     lateinit var adapter: StatsAdapter
 
     companion object {
-        public fun newInstance(): StatsFragment = StatsFragment()
+        fun newInstance(): StatsFragment = StatsFragment()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -29,7 +29,7 @@ import java.util.*
  */
 
 
-public class StatsAdapter(val context: Context, val db: SessionDb): RecyclerView.Adapter<StatsAdapter.ViewHolder>() {
+class StatsAdapter(val context: Context, val db: SessionDb): RecyclerView.Adapter<StatsAdapter.ViewHolder>() {
 
     data class MeditationStat(val name: String, val value: String)
 
@@ -107,9 +107,9 @@ public class StatsAdapter(val context: Context, val db: SessionDb): RecyclerView
 
     }
 
-    public class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        public var title: TextView
-        public var subtitle: TextView
+    class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+        var title: TextView
+        var subtitle: TextView
 
         init {
             title = v.findViewById(R.id.textViewStatName) as TextView
