@@ -13,6 +13,8 @@ android {
         targetSdkVersion 23
         versionCode 5
         versionName "1.0.5"
+
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
         release {
@@ -62,6 +64,9 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
+
+    // JUnit
+    testCompile 'junit:junit:4.12'
 }
 
 buildscript {
