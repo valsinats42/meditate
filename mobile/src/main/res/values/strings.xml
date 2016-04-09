@@ -31,6 +31,10 @@
     <string name="run_streak_indicator">Run Streak Indicator</string>
     <string name="meditation_session_in_progress">Meditation session in progress</string>
 
+    <plurals name="hours">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
     <plurals name="minutes">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>

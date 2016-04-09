@@ -29,11 +29,9 @@ class LogAdapter(val context: Context, val db: SessionDb): RecyclerView.Adapter<
     private val data: RealmResults<DbMeditationSession>
     private var runs: List<ListPosition> = emptyList()
 
-    private val changeListener = object : RealmChangeListener {
-        override fun onChange() {
-            updateRuns()
-            notifyDataSetChanged()
-        }
+    private val changeListener = RealmChangeListener {
+        updateRuns()
+        notifyDataSetChanged()
     }
 
     init {

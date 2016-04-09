@@ -9,16 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import me.stanislav_nikolov.meditate.R
 import me.stanislav_nikolov.meditate.adapters.StatsAdapter
-import me.stanislav_nikolov.meditate.db.SessionDb
 import me.stanislav_nikolov.meditate.graph
 import javax.inject.Inject
 
 class StatsFragment : Fragment() {
 
-    @Inject lateinit var db: SessionDb
+    @Inject lateinit var adapter: StatsAdapter
 
     var recyclerView: RecyclerView? = null
-    lateinit var adapter: StatsAdapter
 
     companion object {
         fun newInstance(): StatsFragment = StatsFragment()
@@ -28,8 +26,6 @@ class StatsFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         graph().inject(this)
-
-        adapter = StatsAdapter(context, db)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

@@ -6,17 +6,20 @@ import io.realm.RealmChangeListener
 import me.stanislav_nikolov.meditate.now
 import me.stanislav_nikolov.meditate.toDate
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Created by stanley on 13.10.15.
  */
 
-class SessionDb @Singleton @Inject constructor(val realm: Realm) {
+class SessionDb constructor(val realm: Realm) {
+    init {
+//        loadDb()
+    }
+
     val allSessions = realm.allObjectsSorted(DbMeditationSession::class.java, "endTime", false)
 
     fun addChangeListener(changeListener: RealmChangeListener) = realm.addChangeListener(changeListener)
+    fun removeChangeListener(changeListener: RealmChangeListener) = realm.removeChangeListener(changeListener)
 
     fun saveSession(session: DbMeditationSession) {
         realm.beginTransaction()
@@ -26,18 +29,15 @@ class SessionDb @Singleton @Inject constructor(val realm: Realm) {
         Timber.d("Saved new session: %s -- %s", session.startTime, session.endTime)
     }
 
-    fun deleteSessions(selectedSessionuuids: List<String?>) {
+    fun deleteSessions(selectedSessionUuids: List<String?>) {
         realm.beginTransaction()
 
-        // TODO fix this when there's a sane way to remove multiple results
-        for (s in selectedSessionuuids) {
-            for (i in 0 .. allSessions.lastIndex) {
-                if (allSessions[i].uuid == s) {
-                    allSessions.removeAt(i)
-                    break
-                }
-            }
+        var clause = realm.where(DbMeditationSession::class.java)
+            .equalTo("uuid", selectedSessionUuids[0])
+        for (i in 1..selectedSessionUuids.lastIndex) {
+            clause = clause.or().equalTo("uuid", selectedSessionUuids[i])
         }
+        clause.findAll().clear()
 
         realm.commitTransaction()
     }
@@ -57,7 +57,15 @@ class SessionDb @Singleton @Inject constructor(val realm: Realm) {
             m.uuid = java.util.UUID.randomUUID().toString()
             m.startTime = it.minus(0, 0, 0, 0, 30, 0, 0, DateTime.DayOverflow.Spillover).toDate()
             m.endTime = it.toDate()
+            m.initialDurationSeconds = 15 * 60
         }
         realm.commitTransaction()
+    }
+
+    fun lastSessionLengthOrDefault(defaultLength: Int): Int {
+        return allSessions
+                .filter { it.getDuration() >= it.initialDurationSeconds }
+                .firstOrNull()?.initialDurationSeconds?.div(60) ?:
+                defaultLength
     }
 }

@@ -9,15 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import me.stanislav_nikolov.meditate.R
 import me.stanislav_nikolov.meditate.adapters.LogAdapter
-import me.stanislav_nikolov.meditate.db.SessionDb
 import me.stanislav_nikolov.meditate.graph
 import javax.inject.Inject
 
 class LogFragment : Fragment() {
-    var recyclerView: RecyclerView? = null
 
-    @Inject lateinit var db: SessionDb
-    lateinit var adapter: LogAdapter
+    @Inject lateinit var adapter: LogAdapter
+
+    var recyclerView: RecyclerView? = null
 
     companion object {
         fun newInstance(): LogFragment = LogFragment()
@@ -27,8 +26,6 @@ class LogFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         graph().inject(this)
-
-        adapter = LogAdapter(context, db)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

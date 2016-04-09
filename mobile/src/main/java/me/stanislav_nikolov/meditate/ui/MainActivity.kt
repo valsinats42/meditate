@@ -16,6 +16,17 @@ class MainActivity : android.support.v7.app.AppCompatActivity() {
     lateinit var viewPager: ViewPager
     lateinit var tabLayout: TabLayout
 
+    data class TitledFragment(val fragment: Fragment, val title: String)
+
+    class ViewPagerAdapter(fragmentManager: FragmentManager, val fragments: List<TitledFragment>) :
+            FragmentPagerAdapter(fragmentManager) {
+        override fun getCount() = fragments.size
+
+        override fun getItem(position: Int) = fragments[position].fragment
+
+        override fun getPageTitle(position: Int) = fragments[position].title
+    }
+
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -26,33 +37,13 @@ class MainActivity : android.support.v7.app.AppCompatActivity() {
         tabLayout = findViewById(R.id.tab_layout) as TabLayout
 
         setSupportActionBar(toolbar)
+
         setupTabs()
-    }
-
-    fun setupTabs() {
-        val fragments = listOf(
-                ViewPagerAdapter.F(SitFragment.newInstance(), getString(R.string.new_session)),
-                ViewPagerAdapter.F(StatsFragment.newInstance(), getString(R.string.statistics)),
-                ViewPagerAdapter.F(LogFragment.newInstance(), getString(R.string.session_log))
-        )
-
-        viewPager.adapter = ViewPagerAdapter(supportFragmentManager, fragments)
-        tabLayout.setupWithViewPager(viewPager);
     }
 
     override fun onCreateOptionsMenu(menu: android.view.Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
-    }
-
-    class ViewPagerAdapter(fragmentManager: FragmentManager, val fragments: List<ViewPagerAdapter.F>) : FragmentPagerAdapter(fragmentManager) {
-        data class F(val fragment: Fragment, val title: String)
-
-        override fun getCount() = fragments.size
-
-        override fun getItem(position: Int) = fragments[position].fragment
-
-        override fun getPageTitle(position: Int) = fragments[position].title
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -61,5 +52,16 @@ class MainActivity : android.support.v7.app.AppCompatActivity() {
         if (resultCode == Activity.RESULT_OK) {
             viewPager.postDelayed({ viewPager.currentItem = 1 }, 1000)
         }
+    }
+
+    fun setupTabs() {
+        val fragments = listOf(
+                TitledFragment(SitFragment.newInstance(), getString(R.string.new_session)),
+                TitledFragment(StatsFragment.newInstance(), getString(R.string.statistics)),
+                TitledFragment(LogFragment.newInstance(), getString(R.string.session_log))
+        )
+
+        viewPager.adapter = ViewPagerAdapter(supportFragmentManager, fragments)
+        tabLayout.setupWithViewPager(viewPager);
     }
 }

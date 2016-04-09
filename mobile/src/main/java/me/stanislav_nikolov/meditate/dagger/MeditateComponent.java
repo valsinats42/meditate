@@ -9,6 +9,9 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import io.realm.Realm;
+import me.stanislav_nikolov.meditate.adapters.LogAdapter;
+import me.stanislav_nikolov.meditate.adapters.StatsAdapter;
+import me.stanislav_nikolov.meditate.db.SessionDb;
 import me.stanislav_nikolov.meditate.ui.LogFragment;
 import me.stanislav_nikolov.meditate.ui.MeditationSessionActivity;
 import me.stanislav_nikolov.meditate.ui.SitFragment;
@@ -31,8 +34,11 @@ public interface MeditateComponent {
     void inject(MeditationSessionActivity fragment);
 
     Application application();
+    SessionDb sessionDb();
     Realm realm();
     MediaPlayer mediaPlayer();
     NotificationManager notificationManager();
     AlarmManager alarmManager();
+    LogAdapter logAdapter();
+    StatsAdapter statsAdapter();
 }

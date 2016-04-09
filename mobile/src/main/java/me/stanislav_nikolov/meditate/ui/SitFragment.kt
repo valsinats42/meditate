@@ -9,10 +9,10 @@ import android.support.v7.widget.CardView
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import io.realm.RealmChangeListener
 import me.stanislav_nikolov.meditate.BuildConfig
 import me.stanislav_nikolov.meditate.R
 import me.stanislav_nikolov.meditate.db.SessionDb
-import me.stanislav_nikolov.meditate.db.getDuration
 import me.stanislav_nikolov.meditate.graph
 import javax.inject.Inject
 
@@ -47,6 +47,10 @@ class SitFragment : Fragment() {
         graph().inject(this)
     }
 
+    private val realmChangeListener = RealmChangeListener {
+        retrieveLastSessionLength()
+    }
+
     override fun onCreateView(inflater: android.view.LayoutInflater, container: android.view.ViewGroup?, savedInstanceState: android.os.Bundle?): android.view.View? {
         val view = inflater.inflate(R.layout.fragment_sit, container, false)
 
@@ -55,6 +59,8 @@ class SitFragment : Fragment() {
         bindEvents()
 
         retrieveLastSessionLength()
+
+        db.addChangeListener(realmChangeListener)
 
         updateUi()
 
@@ -117,10 +123,7 @@ class SitFragment : Fragment() {
     private fun retrieveLastSessionLength() {
         val DEFAULT_SESSION_LENGTH = 10
 
-        sessionLengthMinutes = db.allSessions
-                .filter { it.getDuration() >= it.initialDurationSeconds }
-                .firstOrNull()?.initialDurationSeconds?.div(60) ?:
-                DEFAULT_SESSION_LENGTH
+        sessionLengthMinutes = db.lastSessionLengthOrDefault(DEFAULT_SESSION_LENGTH)
     }
 
     private fun updateUi() {

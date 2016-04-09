@@ -108,6 +108,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/instant-run-support" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jniLibs" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/manifests" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/pre-dexed" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/reload-dex" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/res" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/restart-dex" />
@@ -136,8 +137,8 @@
     <orderEntry type="library" exported="" name="cardview-v7-23.2.0" level="project" />
     <orderEntry type="library" exported="" name="crashlytics-core-2.3.8" level="project" />
     <orderEntry type="library" exported="" name="beta-1.1.4" level="project" />
-    <orderEntry type="library" exported="" name="dagger-2.0.2" level="project" />
     <orderEntry type="library" exported="" name="javax.inject-1" level="project" />
+    <orderEntry type="library" exported="" name="dagger-2.0.2" level="project" />
     <orderEntry type="library" exported="" name="kotlin-runtime-1.0.1-2" level="project" />
     <orderEntry type="library" exported="" name="design-23.2.0" level="project" />
     <orderEntry type="library" exported="" name="hirondelle-date4j-1.5.1" level="project" />
