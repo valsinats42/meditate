@@ -8,4 +8,5 @@
 /mobile/*.log
 *.apk
 *.iml
+.idea
 
