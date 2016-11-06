@@ -31,6 +31,8 @@ class SitFragment : Fragment() {
     // UI
     var buttonMinusTime: Button? = null
     var buttonPlusTime: Button? = null
+    var buttonMinus1min: Button? = null
+    var buttonPlus1min: Button? = null
     var fabStart: FloatingActionButton? = null
     var textViewTime: TextView? = null
     var timerView: CardView? = null
@@ -83,7 +85,21 @@ class SitFragment : Fragment() {
                 updateUi()
             }
         }
+        with(buttonMinus1min!!) {
+            text = getString(R.string.minus_x_min, 1)
+            setOnClickListener {
+                if (sessionLengthMinutes > 1) sessionLengthMinutes -= 1
+                updateUi()
+            }
+        }
 
+        with(buttonPlus1min!!) {
+            text = getString(R.string.plus_x_min, 1)
+            setOnClickListener {
+                sessionLengthMinutes += 1
+                updateUi()
+            }
+        }
         fabStart!!.setOnClickListener {
             var preparationLength = 15
             var sessionLength = 60 * sessionLengthMinutes
@@ -105,6 +121,8 @@ class SitFragment : Fragment() {
     private fun bindViews(view: View) {
         buttonMinusTime = view.findViewById(R.id.buttonMinusTime) as Button
         buttonPlusTime = view.findViewById(R.id.buttonPlusTime) as Button
+        buttonMinus1min = view.findViewById(R.id.buttonMinus1min) as Button
+        buttonPlus1min = view.findViewById(R.id.buttonPlus1min) as Button
         fabStart = view.findViewById(R.id.fabStartStop) as FloatingActionButton
         textViewTime = view.findViewById(R.id.textViewTime) as TextView
         timerView = view.findViewById(R.id.timerView) as CardView

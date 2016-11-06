@@ -51,7 +51,7 @@ class MeditationSessionActivity : AppCompatActivity() {
 
     fun setTimerText(time: Int) {
         val (h, m, s) = secondsToHMS(time)
-        minutes.text = getString(R.string.x_min, 60 * h + m);
+        minutes.text = getString(R.string.x_min, 60 * h + m)
         seconds.text = getString(R.string.x_s, s)
 
         if (meditationStartTime != null) {
