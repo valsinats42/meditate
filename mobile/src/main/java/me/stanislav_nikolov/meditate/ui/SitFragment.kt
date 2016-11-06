@@ -9,10 +9,10 @@ import android.support.v7.widget.CardView
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import io.realm.RealmChangeListener
 import me.stanislav_nikolov.meditate.BuildConfig
 import me.stanislav_nikolov.meditate.R
 import me.stanislav_nikolov.meditate.db.SessionDb
-import me.stanislav_nikolov.meditate.db.getDuration
 import me.stanislav_nikolov.meditate.graph
 import javax.inject.Inject
 
@@ -24,13 +24,15 @@ import javax.inject.Inject
  * Use the [SitFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-public class SitFragment : Fragment() {
+class SitFragment : Fragment() {
 
     var sessionLengthMinutes = 0
 
     // UI
     var buttonMinusTime: Button? = null
     var buttonPlusTime: Button? = null
+    var buttonMinus1min: Button? = null
+    var buttonPlus1min: Button? = null
     var fabStart: FloatingActionButton? = null
     var textViewTime: TextView? = null
     var timerView: CardView? = null
@@ -38,13 +40,17 @@ public class SitFragment : Fragment() {
     @Inject lateinit var db: SessionDb
 
     companion object {
-        public fun newInstance(): SitFragment = SitFragment()
+        fun newInstance(): SitFragment = SitFragment()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         graph().inject(this)
+    }
+
+    private val realmChangeListener = RealmChangeListener {
+        retrieveLastSessionLength()
     }
 
     override fun onCreateView(inflater: android.view.LayoutInflater, container: android.view.ViewGroup?, savedInstanceState: android.os.Bundle?): android.view.View? {
@@ -55,6 +61,8 @@ public class SitFragment : Fragment() {
         bindEvents()
 
         retrieveLastSessionLength()
+
+        db.addChangeListener(realmChangeListener)
 
         updateUi()
 
@@ -77,7 +85,21 @@ public class SitFragment : Fragment() {
                 updateUi()
             }
         }
+        with(buttonMinus1min!!) {
+            text = getString(R.string.minus_x_min, 1)
+            setOnClickListener {
+                if (sessionLengthMinutes > 1) sessionLengthMinutes -= 1
+                updateUi()
+            }
+        }
 
+        with(buttonPlus1min!!) {
+            text = getString(R.string.plus_x_min, 1)
+            setOnClickListener {
+                sessionLengthMinutes += 1
+                updateUi()
+            }
+        }
         fabStart!!.setOnClickListener {
             var preparationLength = 15
             var sessionLength = 60 * sessionLengthMinutes
@@ -99,6 +121,8 @@ public class SitFragment : Fragment() {
     private fun bindViews(view: View) {
         buttonMinusTime = view.findViewById(R.id.buttonMinusTime) as Button
         buttonPlusTime = view.findViewById(R.id.buttonPlusTime) as Button
+        buttonMinus1min = view.findViewById(R.id.buttonMinus1min) as Button
+        buttonPlus1min = view.findViewById(R.id.buttonPlus1min) as Button
         fabStart = view.findViewById(R.id.fabStartStop) as FloatingActionButton
         textViewTime = view.findViewById(R.id.textViewTime) as TextView
         timerView = view.findViewById(R.id.timerView) as CardView
@@ -117,10 +141,7 @@ public class SitFragment : Fragment() {
     private fun retrieveLastSessionLength() {
         val DEFAULT_SESSION_LENGTH = 10
 
-        sessionLengthMinutes = db.allSessions
-                .filter { it.getDuration() >= it.initialDurationSeconds }
-                .firstOrNull()?.initialDurationSeconds?.div(60) ?:
-                DEFAULT_SESSION_LENGTH
+        sessionLengthMinutes = db.lastSessionLengthOrDefault(DEFAULT_SESSION_LENGTH)
     }
 
     private fun updateUi() {

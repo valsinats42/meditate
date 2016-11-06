@@ -22,18 +22,16 @@ import java.util.*
  * Created by stanley on 05.09.15.
  */
 
-public class LogAdapter(val context: Context, val db: SessionDb): RecyclerView.Adapter<LogAdapter.ViewHolder>() {
+class LogAdapter(val context: Context, val db: SessionDb): RecyclerView.Adapter<LogAdapter.ViewHolder>() {
 
     enum class ListPosition { ALONE, FIRST, MIDDLE, LAST }
 
     private val data: RealmResults<DbMeditationSession>
     private var runs: List<ListPosition> = emptyList()
 
-    private val changeListener = object : RealmChangeListener {
-        override fun onChange() {
-            updateRuns()
-            notifyDataSetChanged()
-        }
+    private val changeListener = RealmChangeListener {
+        updateRuns()
+        notifyDataSetChanged()
     }
 
     init {
@@ -88,10 +86,10 @@ public class LogAdapter(val context: Context, val db: SessionDb): RecyclerView.A
         actionMode?.title = context.resources.getQuantityString(R.plurals.sessions_selected, n, n)
     }
 
-    inner public class ViewHolder(v: View) : SwappingHolder(v, multiSelector) {
-        public var title: TextView
-        public var subtitle: TextView
-        public var run: ImageView
+    inner class ViewHolder(v: View) : SwappingHolder(v, multiSelector) {
+        var title: TextView
+        var subtitle: TextView
+        var run: ImageView
 
         init {
             title = v.findViewById(R.id.textViewDate) as TextView

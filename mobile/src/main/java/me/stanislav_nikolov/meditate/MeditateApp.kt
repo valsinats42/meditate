@@ -10,9 +10,9 @@ import timber.log.Timber
 /**
  * Created by stanley on 19.09.15.
  */
-public class MeditateApp : InjectingApplication() {
+class MeditateApp : InjectingApplication() {
 
-    lateinit public var graph: MeditateComponent
+    lateinit var graph: MeditateComponent
 
     override fun onCreate() {
         super.onCreate()
@@ -36,4 +36,5 @@ public class MeditateApp : InjectingApplication() {
             }
         }
     }
+
 }
